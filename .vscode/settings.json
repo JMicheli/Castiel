@@ -1,0 +1,13 @@
+{
+  "[rust]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "rust-lang.rust-analyzer",
+  },
+  "rust-analyzer.check.command": "clippy",
+
+  "markdownlint.config": {
+    "MD034": false,
+  },
+
+  "editor.rulers": [100]
+}
