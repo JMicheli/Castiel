@@ -5,8 +5,9 @@
   },
   "rust-analyzer.check.command": "clippy",
 
-  "markdownlint.config": {
-    "MD034": false,
+  "[html]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
 
   "editor.rulers": [100]
