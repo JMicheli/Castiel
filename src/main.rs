@@ -7,7 +7,6 @@ use tokio::net::TcpListener;
 
 #[tokio::main]
 async fn main() {
-  // build our application with two routes
   let app = Router::new()
     .route("/", get(index))
     .route("/press", post(press));
@@ -17,7 +16,6 @@ async fn main() {
   axum::serve(listener, app).await.unwrap();
 }
 
-// serve the HTML page
 async fn index() -> Html<&'static str> {
   Html(include_str!("../static/index.html"))
 }
