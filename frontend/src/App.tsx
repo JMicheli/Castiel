@@ -1,15 +1,23 @@
-import './App.css'
+import "./App.css";
+import ChromecastCard from "./components/ChromecastCard";
 
 function App() {
-  const handleClick = () => {
-    fetch('/press', { method: 'POST' });
-  };
+  // pretend we have three Chromecasts for now
+  const devices = [1, 2, 3];
 
   return (
-    <div style={{ display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center' }}>
-      <button onClick={handleClick}>Press me</button>
+    <div className="App">
+      <header className="App-header">
+        <h1>Chromecast Dashboard</h1>
+      </header>
+
+      <main className="App-grid">
+        {devices.map((id) => (
+          <ChromecastCard key={id} />
+        ))}
+      </main>
     </div>
   );
 }
 
-export default App
+export default App;
