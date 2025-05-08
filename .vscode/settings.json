@@ -2,6 +2,8 @@
   "[rust]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "rust-lang.rust-analyzer",
+  
+    "editor.rulers": [100]
   },
   "rust-analyzer.check.command": "clippy",
 
@@ -10,5 +12,11 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
 
-  "editor.rulers": [100]
+  "[markdown]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "prettier.proseWrap": "always",
+
+    "editor.rulers": [80]
+  },
 }
