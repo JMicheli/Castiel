@@ -1,5 +1,5 @@
 [package]
-name = "chromecast-experiment"
+name = "boardcast"
 version = "0.1.0"
 edition = "2024"
 
@@ -12,3 +12,6 @@ serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.140"
 tokio = { version = "1.45.0", features = ["full"] }
 tower-http = { version = "0.6.2", features = ["fs"] }
+config = "0.15.11"
+toml = "0.8.22"
+tracing = "0.1.41"

@@ -1,59 +1,40 @@
+//! Main entry point for Boardcast.
+
+mod config;
 mod discovery;
 mod media;
+mod routes;
 
-use axum::{
-  Json, Router,
-  http::StatusCode,
-  routing::{get, post},
-};
+use std::path::Path;
+
 use tokio::net::TcpListener;
-use tower_http::services::{ServeDir, ServeFile};
 
-use media::StartMediaData;
+use config::BoardcastSettings;
+
+const DEFAULT_CONFIG_PATH: &str = "Settings.toml";
 
 #[tokio::main]
 async fn main() {
-  let serve_dir =
-    ServeDir::new("frontend/dist").not_found_service(ServeFile::new("frontend/dist/index.html"));
+  // Load settings from file
+  let settings =
+    BoardcastSettings::initialize(Path::new(DEFAULT_CONFIG_PATH)).unwrap_or_else(|err| {
+      tracing::warn!("Failed to load settings: {err}");
+      BoardcastSettings::default()
+    });
 
-  let app = Router::new()
-    .route("/api/chromecasts", get(get_chromecasts))
-    .route("/api/start-media", post(send_media_handler))
-    .fallback_service(serve_dir);
+  let app = routes::create_router();
 
-  let listener = TcpListener::bind("127.0.0.1:3000").await.unwrap();
-  println!("Listening on {}", listener.local_addr().unwrap());
-  axum::serve(listener, app).await.unwrap();
-}
+  let listener_addr = format!("127.0.0.1:{}", settings.port);
+  let listener = TcpListener::bind(&listener_addr)
+    .await
+    .unwrap_or_else(|_| panic!("Failed to bind to {listener_addr}"));
 
-/// Handler for the GET /api/chromecasts endpoint.
-///
-/// Runs device discovery and returns a list of discovered Chromecast devices as JSON.
-async fn get_chromecasts() -> Result<Json<Vec<discovery::DiscoveredDevice>>, StatusCode> {
-  // Search for Chromecasts for 2 seconds
-  let devices = discovery::find_chromecasts(1);
-
-  // Log the discovered devices
-  println!(
-    "Found {} Chromecast device(s): {:?}",
-    devices.len(),
-    devices
+  tracing::info!(
+    "Listening on {}",
+    listener
+      .local_addr()
+      .expect("Failed to retrieve local address")
   );
 
-  // Return the devices as JSON
-  Ok(Json(devices))
-}
-
-/// Handler for the POST /api/send-media endpoint.
-///
-/// Receives media data from the frontend and initiates the media sending process.
-async fn send_media_handler(Json(media_data): Json<StartMediaData>) -> Result<(), StatusCode> {
-  match media::start_from_data(media_data) {
-    Ok(_) => Ok(()),
-    Err(e) => {
-      eprintln!("Error starting media: {:?}", e);
-      // TODO: Provide more specific error status codes based on the error type
-      Err(StatusCode::INTERNAL_SERVER_ERROR)
-    }
-  }
+  axum::serve(listener, app).await.unwrap();
 }

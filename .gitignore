@@ -1,2 +1,5 @@
 # Rust build results
 /target
+
+# Files generated during testing
+Settings.toml

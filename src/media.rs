@@ -1,3 +1,5 @@
+//! Defines functionality for starting media playback and display on Chromecast devices.
+
 use rust_cast::{
   CastDevice,
   channels::{
@@ -45,7 +47,7 @@ pub struct StartMediaData {
 
 /// Starts media using the contents of `StartMediaData`.
 pub fn start_from_data(data: StartMediaData) -> Result<(), rust_cast::errors::Error> {
-  println!("Starting media from data: {data:?}");
+  tracing::info!("Starting media from data: {data:?}");
 
   let ip = data.ip_address.clone();
   let cast_device = get_cast_device(&ip, data.port)?;
@@ -78,8 +80,6 @@ fn start_default_media(
   cast_device: CastDevice,
   data: StartMediaData,
 ) -> Result<(), rust_cast::errors::Error> {
-  println!("In default media function");
-
   let app_to_launch = CastDeviceApp::DefaultMediaReceiver;
   let app = cast_device.receiver.launch_app(&app_to_launch)?;
 
@@ -150,12 +150,12 @@ fn start_web_media(
 //   match cast_device.receive() {
 //     Ok(ChannelMessage::Heartbeat(response)) => {
 //       println!("[Heartbeat] {:?}", response);
-
+//
 //       if let HeartbeatResponse::Ping = response {
 //         cast_device.heartbeat.pong().unwrap();
 //       }
 //     }
-
+//
 //     Ok(ChannelMessage::Connection(response)) => println!("[Connection] {:?}", response),
 //     Ok(ChannelMessage::Media(response)) => println!("[Media] {:?}", response),
 //     Ok(ChannelMessage::Receiver(response)) => println!("[Receiver] {:?}", response),
@@ -163,7 +163,7 @@ fn start_web_media(
 //       "Support for the following message type is not yet supported: {:?}",
 //       response
 //     ),
-
+//
 //     Err(error) => println!("Error occurred while receiving message {}", error),
 //   }
 // }

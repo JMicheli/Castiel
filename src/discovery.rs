@@ -1,3 +1,5 @@
+//! Defines functions for discovering Chromecast devices on the network and returning information to the frontend.
+
 use std::{
   collections::HashMap,
   time::{Duration, Instant},
@@ -102,8 +104,8 @@ pub fn find_chromecasts(search_seconds: u64) -> Vec<DiscoveredDevice> {
       Err(RecvTimeoutError::Timeout) => {
         // no events in this interval → keep looping until global timeout
       }
-      Err(e) => {
-        eprintln!("mDNS recv error: {}", e);
+      Err(err) => {
+        tracing::error!("mDNS receive error: {err}");
         break;
       }
     }
