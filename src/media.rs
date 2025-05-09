@@ -1,7 +1,6 @@
 use rust_cast::{
-  CastDevice, ChannelMessage,
+  CastDevice,
   channels::{
-    heartbeat::HeartbeatResponse,
     media::{Media, StreamType},
     receiver::CastDeviceApp,
   },

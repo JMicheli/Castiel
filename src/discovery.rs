@@ -76,7 +76,7 @@ impl TryFrom<ServiceInfo> for DiscoveredDevice {
 
 /// Search for chromecasts for as long as the `search_seconds` parameter asks.
 pub fn find_chromecasts(search_seconds: u64) -> Vec<DiscoveredDevice> {
-  // Create daemon and reciever
+  // Create daemon and receiver
   let mdns = ServiceDaemon::new().expect("Failed to create mDNS daemon.");
   let receiver = mdns
     .browse(SERVICE_TYPE)

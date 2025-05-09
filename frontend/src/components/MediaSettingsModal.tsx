@@ -85,9 +85,9 @@ function MediaSettingsModal({
                         setReceiverType(e.target.value as ReceiverOptions)
                       }
                     >
-                      <option value="Default">Default Media Reciever</option>
-                      <option value="YouTube">YouTube Reciever</option>
-                      <option value="Web">Web Reciever</option>
+                      <option value="Default">Default Media Receiver</option>
+                      <option value="YouTube">YouTube Receiver</option>
+                      <option value="Web">Web Receiver</option>
                     </select>
                   </div>
                 </div>
