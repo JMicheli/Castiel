@@ -1,5 +1,5 @@
 /**
- * TypeScript interfaces and API functions for Chromecast discovery
+ * TypeScript interfaces and API functions for Chromecast discovery.
  */
 
 /**
@@ -29,7 +29,8 @@ export interface DiscoveredDevice {
 }
 
 /**
- * Fetches the list of discovered Chromecast devices from the API
+ * Fetches the list of discovered Chromecast devices from the API.
+ *
  * @returns Promise resolving to an array of DiscoveredDevice objects
  */
 export async function fetchChromecasts(): Promise<DiscoveredDevice[]> {

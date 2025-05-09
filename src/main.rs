@@ -1,8 +1,15 @@
 mod discovery;
+mod media;
 
-use axum::{Json, Router, http::StatusCode, routing::get};
+use axum::{
+  Json, Router,
+  http::StatusCode,
+  routing::{get, post},
+};
 use tokio::net::TcpListener;
 use tower_http::services::{ServeDir, ServeFile};
+
+use media::StartMediaData;
 
 #[tokio::main]
 async fn main() {
@@ -11,6 +18,7 @@ async fn main() {
 
   let app = Router::new()
     .route("/api/chromecasts", get(get_chromecasts))
+    .route("/api/start-media", post(send_media_handler))
     .fallback_service(serve_dir);
 
   let listener = TcpListener::bind("127.0.0.1:3000").await.unwrap();
@@ -23,7 +31,7 @@ async fn main() {
 /// Runs device discovery and returns a list of discovered Chromecast devices as JSON.
 async fn get_chromecasts() -> Result<Json<Vec<discovery::DiscoveredDevice>>, StatusCode> {
   // Search for Chromecasts for 2 seconds
-  let devices = discovery::find_chromecasts(2);
+  let devices = discovery::find_chromecasts(1);
 
   // Log the discovered devices
   println!(
@@ -34,4 +42,18 @@ async fn get_chromecasts() -> Result<Json<Vec<discovery::DiscoveredDevice>>, Sta
 
   // Return the devices as JSON
   Ok(Json(devices))
+}
+
+/// Handler for the POST /api/send-media endpoint.
+///
+/// Receives media data from the frontend and initiates the media sending process.
+async fn send_media_handler(Json(media_data): Json<StartMediaData>) -> Result<(), StatusCode> {
+  match media::start_from_data(media_data) {
+    Ok(_) => Ok(()),
+    Err(e) => {
+      eprintln!("Error starting media: {:?}", e);
+      // TODO: Provide more specific error status codes based on the error type
+      Err(StatusCode::INTERNAL_SERVER_ERROR)
+    }
+  }
 }
