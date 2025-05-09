@@ -10,6 +10,8 @@ function App() {
       <Navbar />
 
       <div className="container is-max-desktop">
+        <button onClick={testScan}>Scan Chromecasts</button>
+
         <div className="grid">
           {devices.map((id) => (
             <div className="cell">
@@ -20,6 +22,10 @@ function App() {
       </div>
     </div>
   );
+}
+
+function testScan() {
+  fetch("/scan", { method: "POST" });
 }
 
 export default App;
