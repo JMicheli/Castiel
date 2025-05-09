@@ -84,7 +84,7 @@ pub fn find_chromecasts(search_seconds: u64) -> Vec<DiscoveredDevice> {
     .browse(SERVICE_TYPE)
     .expect("Failed to browse mDNS services.");
 
-  // Create hashmap to store viewed chromecasts and avoid duplication
+  // Create HashMap to store viewed chromecasts and avoid duplication
   let mut seen = HashMap::new();
 
   // Listen for events until timeout elapses

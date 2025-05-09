@@ -7,7 +7,7 @@ use axum::{
 };
 use tower_http::services::{ServeDir, ServeFile};
 
-use crate::{
+use crate::devices::{
   discovery,
   media::{self, StartMediaData},
 };

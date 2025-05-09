@@ -1,8 +1,7 @@
 //! Main entry point for Boardcast.
 
 mod config;
-mod discovery;
-mod media;
+mod devices;
 mod routes;
 
 use std::path::Path;

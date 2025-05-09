@@ -53,8 +53,10 @@ pub fn start_from_data(data: StartMediaData) -> Result<(), rust_cast::errors::Er
   let cast_device = get_cast_device(&ip, data.port)?;
 
   match data.receiver {
-    ReceiverOptions::Default => start_default_media(cast_device, data)?,
-    ReceiverOptions::YouTube => start_youtube_media(cast_device, data)?,
+    ReceiverOptions::Default => {
+      start_app_and_media(cast_device, CastDeviceApp::DefaultMediaReceiver, data)?
+    }
+    ReceiverOptions::YouTube => start_app_and_media(cast_device, CastDeviceApp::YouTube, data)?,
     ReceiverOptions::Web => start_web_media(cast_device, data.media_url)?,
   }
 
@@ -76,12 +78,16 @@ fn get_cast_device(ip: &str, port: u16) -> Result<CastDevice, rust_cast::errors:
   Ok(cast_device)
 }
 
-fn start_default_media(
+/// Uses the `cast_device` to start the specified `app_to_start` and begin playing `data`.
+///
+/// This function can be used to start generic media with [`CastDeviceApp::DefaultMediaReciever`]
+/// or YouTube videos with [`CastDevice::YouTube`].
+fn start_app_and_media(
   cast_device: CastDevice,
+  app_to_start: CastDeviceApp,
   data: StartMediaData,
 ) -> Result<(), rust_cast::errors::Error> {
-  let app_to_launch = CastDeviceApp::DefaultMediaReceiver;
-  let app = cast_device.receiver.launch_app(&app_to_launch)?;
+  let app = cast_device.receiver.launch_app(&app_to_start)?;
 
   cast_device.connection.connect(app.transport_id.as_str())?;
 
@@ -97,13 +103,6 @@ fn start_default_media(
     .media
     .load(app.transport_id, app.session_id, &media)?;
 
-  Ok(())
-}
-
-fn start_youtube_media(
-  cast_device: CastDevice,
-  data: StartMediaData,
-) -> Result<(), rust_cast::errors::Error> {
   Ok(())
 }
 
