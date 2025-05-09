@@ -211,6 +211,7 @@ dependencies = [
  "flume",
  "mdns-sd",
  "rust_cast",
+ "serde",
  "serde_json",
  "tokio",
  "tower-http",

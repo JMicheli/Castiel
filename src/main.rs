@@ -1,6 +1,6 @@
 mod discovery;
 
-use axum::{Router, routing::post};
+use axum::{Json, Router, http::StatusCode, routing::get};
 use tokio::net::TcpListener;
 use tower_http::services::{ServeDir, ServeFile};
 
@@ -10,7 +10,7 @@ async fn main() {
     ServeDir::new("frontend/dist").not_found_service(ServeFile::new("frontend/dist/index.html"));
 
   let app = Router::new()
-    .route("/scan", post(scan))
+    .route("/api/chromecasts", get(get_chromecasts))
     .fallback_service(serve_dir);
 
   let listener = TcpListener::bind("127.0.0.1:3000").await.unwrap();
@@ -18,9 +18,20 @@ async fn main() {
   axum::serve(listener, app).await.unwrap();
 }
 
-async fn scan() {
-  println!("Attempting chromecast scan!");
-  let discover_output = discovery::find_chromecasts(1);
+/// Handler for the GET /api/chromecasts endpoint.
+///
+/// Runs device discovery and returns a list of discovered Chromecast devices as JSON.
+async fn get_chromecasts() -> Result<Json<Vec<discovery::DiscoveredDevice>>, StatusCode> {
+  // Search for Chromecasts for 2 seconds
+  let devices = discovery::find_chromecasts(2);
 
-  println!("Resolved discover output: {discover_output:?}")
+  // Log the discovered devices
+  println!(
+    "Found {} Chromecast device(s): {:?}",
+    devices.len(),
+    devices
+  );
+
+  // Return the devices as JSON
+  Ok(Json(devices))
 }

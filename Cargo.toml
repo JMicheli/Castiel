@@ -8,6 +8,7 @@ axum = "0.8.4"
 flume = "0.11.1"
 mdns-sd = "0.13.9"
 rust_cast = "0.19.0"
+serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.140"
 tokio = { version = "1.45.0", features = ["full"] }
-tower-http = { version = "0.6.3", features = ["fs"] }
+tower-http = { version = "0.6.2", features = ["fs"] }

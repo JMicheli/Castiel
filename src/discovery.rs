@@ -5,11 +5,12 @@ use std::{
 
 use flume::RecvTimeoutError;
 use mdns_sd::{ServiceDaemon, ServiceEvent, ServiceInfo};
+use serde::Serialize;
 
 /// Used to inform the mdns browse command on what services are being searched for.
 const SERVICE_TYPE: &str = "_googlecast._tcp.local.";
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct DiscoveredDevice {
   /// IPv4 or IPv6 address of the discovered Chromecast device.
   pub ip_address: String,
