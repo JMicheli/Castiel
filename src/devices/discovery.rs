@@ -46,7 +46,7 @@ impl TryFrom<ServiceInfo> for DiscoveredDevice {
     let ip_address = info
       .get_addresses()
       .iter()
-      .map(|addr| addr.to_string())
+      .map(ToString::to_string)
       .collect::<Vec<_>>()
       .first()
       .ok_or(BCError::InternalError)?
@@ -56,9 +56,9 @@ impl TryFrom<ServiceInfo> for DiscoveredDevice {
     let props = info.get_properties();
 
     // Pull out standard Chromecast keys
-    let id = props.get_property_val_str("id").map(|s| s.to_string());
-    let model_name = props.get_property_val_str("md").map(|s| s.to_string());
-    let friendly_name = props.get_property_val_str("fn").map(|s| s.to_string());
+    let id = props.get_property_val_str("id").map(ToString::to_string);
+    let model_name = props.get_property_val_str("md").map(ToString::to_string);
+    let friendly_name = props.get_property_val_str("fn").map(ToString::to_string);
 
     // Collect TXT properties into a map
     let mut txt_properties = HashMap::new();
@@ -66,7 +66,7 @@ impl TryFrom<ServiceInfo> for DiscoveredDevice {
       txt_properties.insert(prop.key().to_string(), prop.val_str().to_string());
     }
 
-    Ok(DiscoveredDevice {
+    Ok(Self {
       ip_address,
       port: info.get_port(),
       fullname: info.get_fullname().to_string(),
@@ -102,8 +102,7 @@ pub fn find_chromecasts(search_seconds: u64) -> Result<Vec<DiscoveredDevice>, BC
           seen.entry(device.fullname.clone()).or_insert(device);
         }
       }
-      Ok(_) => { /* ignore other events */ }
-      Err(RecvTimeoutError::Timeout) => { /* Continue looping until global timeout */ }
+      Ok(_) | Err(RecvTimeoutError::Timeout) => { /* Continue looping until global timeout */ }
       Err(err) => {
         tracing::error!("mDNS receive error: {err}");
         return Err(BCError::InternalError);

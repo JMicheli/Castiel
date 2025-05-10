@@ -1,3 +1,4 @@
+pub mod app_ids;
 pub mod discovery;
 pub mod media;
 pub mod status;

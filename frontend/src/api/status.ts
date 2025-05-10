@@ -5,8 +5,14 @@ export interface DeviceStatus {
   appStatus: AppStatus[];
 }
 
+interface VolumeStatus {
+  volume: number;
+  muted: boolean;
+}
+
 interface AppStatus {
   id: string;
+  app_identity: ParsedApp;
   diplayName: string;
   namespaces: string[];
   sessionId: string;
@@ -14,10 +20,12 @@ interface AppStatus {
   transportId: string;
 }
 
-interface VolumeStatus {
-  volume: number;
-  muted: boolean;
-}
+type ParsedApp =
+  | "Backdrop"
+  | "DefaultMedia"
+  | "YouTube"
+  | "WebView"
+  | "Unknown";
 
 /**
  * Fetches the status of a Chromecast device.

@@ -31,17 +31,18 @@ pub enum BCError {
 impl IntoResponse for BCError {
   fn into_response(self) -> Response {
     let (status, error_message) = match self {
-      BCError::ConfigError(err) => (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()),
-      BCError::IoError(err) => (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()),
-      BCError::JsonError(err) => (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()),
-      BCError::MediaError(err) => (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()),
-      BCError::AppError(err) => (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()),
-      BCError::ConnError(err) => (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()),
-      BCError::DeviceLookupFailed(err) => (StatusCode::NOT_FOUND, err.to_string()),
-      BCError::AppLookupFailed => (StatusCode::NOT_FOUND, BCError::AppLookupFailed.to_string()),
-      BCError::InternalError => (
+      Self::ConfigError(err) => (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()),
+      Self::IoError(err) => (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()),
+      Self::JsonError(err) => (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()),
+      Self::MediaError(err) | Self::AppError(err) => {
+        (StatusCode::INTERNAL_SERVER_ERROR, err.to_string())
+      }
+      Self::ConnError(err) => (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()),
+      Self::DeviceLookupFailed(err) => (StatusCode::NOT_FOUND, err.to_string()),
+      Self::AppLookupFailed => (StatusCode::NOT_FOUND, Self::AppLookupFailed.to_string()),
+      Self::InternalError => (
         StatusCode::INTERNAL_SERVER_ERROR,
-        BCError::InternalError.to_string(),
+        Self::InternalError.to_string(),
       ),
     };
 

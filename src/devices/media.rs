@@ -9,7 +9,10 @@ use rust_cast::{
 };
 use serde::{Deserialize, Serialize};
 
-use crate::errors::BCError;
+use crate::{
+  devices::app_ids::{WEBVIEW_ID, WEBVIEW_NAMESPACE},
+  errors::BCError,
+};
 
 #[derive(Debug, Deserialize)]
 pub enum ReceiverOptions {
@@ -54,10 +57,10 @@ pub fn start_from_data(data: StartMediaData) -> Result<(), BCError> {
 
   match data.receiver {
     ReceiverOptions::Default => {
-      start_app_and_media(cast_device, CastDeviceApp::DefaultMediaReceiver, data)?
+      start_app_and_media(&cast_device, &CastDeviceApp::DefaultMediaReceiver, data)?;
     }
-    ReceiverOptions::YouTube => start_app_and_media(cast_device, CastDeviceApp::YouTube, data)?,
-    ReceiverOptions::Web => start_web_media(cast_device, data.media_url)?,
+    ReceiverOptions::YouTube => start_app_and_media(&cast_device, &CastDeviceApp::YouTube, data)?,
+    ReceiverOptions::Web => start_web_media(&cast_device, data.media_url)?,
   }
 
   Ok(())
@@ -68,13 +71,13 @@ pub fn start_from_data(data: StartMediaData) -> Result<(), BCError> {
 /// This function can be used to start generic media with [`CastDeviceApp::DefaultMediaReciever`]
 /// or YouTube videos with [`CastDevice::YouTube`].
 fn start_app_and_media(
-  cast_device: CastDevice,
-  app_to_start: CastDeviceApp,
+  cast_device: &CastDevice,
+  app_to_start: &CastDeviceApp,
   data: StartMediaData,
 ) -> Result<(), BCError> {
   let app = cast_device
     .receiver
-    .launch_app(&app_to_start)
+    .launch_app(app_to_start)
     .map_err(BCError::AppError)?;
 
   cast_device
@@ -98,23 +101,15 @@ fn start_app_and_media(
   Ok(())
 }
 
-/// The ID for the web page viewing app.
-///
-/// This points to an app created for this project:
-/// https://github.com/davestevens/chromecast-webpage-viewer
-const WEB_APP_ID: &str = "209991B4";
-/// The namespace for messages to the web viewing app.
-const WEB_APP_NAMESPACE: &str = "urn:x-cast:uk.co.ecksdee";
-
 #[derive(Debug, Serialize)]
 struct WebAppMessage {
   url: String,
   proxy: bool,
 }
 
-fn start_web_media(cast_device: CastDevice, media_url: String) -> Result<(), BCError> {
+fn start_web_media(cast_device: &CastDevice, media_url: String) -> Result<(), BCError> {
   // Launch web viewer app
-  let app_to_launch = CastDeviceApp::Custom(WEB_APP_ID.to_string());
+  let app_to_launch = CastDeviceApp::Custom(WEBVIEW_ID.to_string());
   let app = cast_device
     .receiver
     .launch_app(&app_to_launch)
@@ -130,7 +125,7 @@ fn start_web_media(cast_device: CastDevice, media_url: String) -> Result<(), BCE
   cast_device
     .receiver
     .broadcast_message(
-      WEB_APP_NAMESPACE,
+      WEBVIEW_NAMESPACE,
       &WebAppMessage {
         url: media_url,
         proxy: false,

@@ -9,3 +9,10 @@ Chromecasts to be displayed.
 
 Boardcast is perfect for users who wish they could display Grafana dashboards or
 static images on a TV.
+
+## TODO List
+
+- Put running app and stop button at frontpage
+- For docker
+  - Can I just forward the correct MDNS ports for a docker container?
+  - MDNS blast is a UDP thing so probably need to forward those ports.
