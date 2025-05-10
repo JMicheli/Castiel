@@ -9,8 +9,6 @@ use rust_cast::{
 };
 use serde::{Deserialize, Serialize};
 
-const DEFAULT_DESTINATION_ID: &str = "receiver-0";
-
 #[derive(Debug, Deserialize)]
 pub enum ReceiverOptions {
   Default,
@@ -50,7 +48,7 @@ pub fn start_from_data(data: StartMediaData) -> Result<(), rust_cast::errors::Er
   tracing::info!("Starting media from data: {data:?}");
 
   let ip = data.ip_address.clone();
-  let cast_device = get_cast_device(&ip, data.port)?;
+  let cast_device = super::get_cast_device(&ip, data.port)?;
 
   match data.receiver {
     ReceiverOptions::Default => {
@@ -61,21 +59,6 @@ pub fn start_from_data(data: StartMediaData) -> Result<(), rust_cast::errors::Er
   }
 
   Ok(())
-}
-
-/// Retrieve a cast device by `ip` and `port`.
-fn get_cast_device(ip: &str, port: u16) -> Result<CastDevice, rust_cast::errors::Error> {
-  // TODO - Figure out how to use host verification properly.
-  let cast_device = CastDevice::connect_without_host_verification(ip, port)?;
-
-  // Test connection
-  // TODO - Make sure I understand what this is doing.
-  cast_device
-    .connection
-    .connect(DEFAULT_DESTINATION_ID.to_string())?;
-  cast_device.heartbeat.ping()?;
-
-  Ok(cast_device)
 }
 
 /// Uses the `cast_device` to start the specified `app_to_start` and begin playing `data`.

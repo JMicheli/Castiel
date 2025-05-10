@@ -2,6 +2,7 @@
 
 mod config;
 mod devices;
+mod logging;
 mod routes;
 
 use std::path::Path;
@@ -14,14 +15,15 @@ const DEFAULT_CONFIG_PATH: &str = "Settings.toml";
 
 #[tokio::main]
 async fn main() {
-  tracing::info!("Launching Boardcast server");
-
   // Load settings from file
   let settings =
     BoardcastSettings::initialize(Path::new(DEFAULT_CONFIG_PATH)).unwrap_or_else(|err| {
       tracing::warn!("Failed to load settings: {err}");
       BoardcastSettings::default()
     });
+
+  logging::init_logging(&settings.log_level);
+  tracing::info!("Launching Boardcast server");
 
   // Create Axum Router
   let app = routes::create_router();

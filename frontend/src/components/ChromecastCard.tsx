@@ -3,6 +3,7 @@ import type { DiscoveredDevice } from "../api/discovery";
 import { SiChromecast } from "@icons-pack/react-simple-icons";
 import { ArrowClockwise } from "@phosphor-icons/react";
 import MediaSettingsModal from "./MediaSettingsModal";
+import { useChromecastStatus } from "../hooks/useChromecastStatus";
 
 interface ChromecastCardProps {
   device: DiscoveredDevice;
@@ -20,10 +21,15 @@ function ChromecastCard({ device, onSelect }: ChromecastCardProps) {
   const [showDetails, setShowDetails] = useState(false);
   const [showMediaSettings, setShowMediaSettings] = useState(false);
 
+  const { /*status, loading, error,*/ refreshStatus } = useChromecastStatus(
+    device.ip_address,
+    device.port
+  );
+
   const handleRefresh = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // Placeholder function for refresh button
-    console.log("Refresh clicked for device:", device.id);
+    // Refresh the status hook
+    refreshStatus();
   };
 
   const handleMediaSettings = (e: React.MouseEvent) => {
