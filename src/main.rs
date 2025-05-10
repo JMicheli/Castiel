@@ -1,4 +1,4 @@
-//! Main entry point for Boardcast.
+//! Main entry point for Castiel.
 
 mod config;
 mod devices;
@@ -10,7 +10,7 @@ use std::path::Path;
 
 use tokio::net::TcpListener;
 
-use config::BoardcastSettings;
+use config::CastielSettings;
 
 const DEFAULT_CONFIG_PATH: &str = "Settings.toml";
 
@@ -18,13 +18,13 @@ const DEFAULT_CONFIG_PATH: &str = "Settings.toml";
 async fn main() {
   // Load settings from file
   let settings =
-    BoardcastSettings::initialize(Path::new(DEFAULT_CONFIG_PATH)).unwrap_or_else(|err| {
+    CastielSettings::initialize(Path::new(DEFAULT_CONFIG_PATH)).unwrap_or_else(|err| {
       tracing::warn!("Failed to load settings: {err}");
-      BoardcastSettings::default()
+      CastielSettings::default()
     });
 
   logging::init_logging(&settings.log_level);
-  tracing::info!("Launching Boardcast server");
+  tracing::info!("Launching Castiel server");
 
   // Create Axum Router
   let app = routes::create_router();

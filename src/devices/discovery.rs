@@ -9,7 +9,7 @@ use flume::RecvTimeoutError;
 use mdns_sd::{ServiceDaemon, ServiceEvent, ServiceInfo};
 use serde::Serialize;
 
-use crate::errors::BCError;
+use crate::errors::CastielError;
 
 /// Used to inform the mdns browse command on what services are being searched for.
 const SERVICE_TYPE: &str = "_googlecast._tcp.local.";
@@ -39,7 +39,7 @@ pub struct DiscoveredDevice {
 }
 
 impl TryFrom<ServiceInfo> for DiscoveredDevice {
-  type Error = BCError;
+  type Error = CastielError;
 
   fn try_from(info: ServiceInfo) -> Result<Self, Self::Error> {
     // Grab the first ip address (error if none found)
@@ -49,7 +49,7 @@ impl TryFrom<ServiceInfo> for DiscoveredDevice {
       .map(ToString::to_string)
       .collect::<Vec<_>>()
       .first()
-      .ok_or(BCError::InternalError)?
+      .ok_or(CastielError::InternalError)?
       .clone();
 
     // Grab the TXT record struct
@@ -79,12 +79,12 @@ impl TryFrom<ServiceInfo> for DiscoveredDevice {
 }
 
 /// Search for chromecasts for as long as the `search_seconds` parameter asks.
-pub fn find_chromecasts(search_seconds: u64) -> Result<Vec<DiscoveredDevice>, BCError> {
+pub fn find_chromecasts(search_seconds: u64) -> Result<Vec<DiscoveredDevice>, CastielError> {
   // Create daemon and receiver
-  let mdns = ServiceDaemon::new().map_err(|_| BCError::InternalError)?;
+  let mdns = ServiceDaemon::new().map_err(|_| CastielError::InternalError)?;
   let receiver = mdns
     .browse(SERVICE_TYPE)
-    .map_err(|_| BCError::InternalError)?;
+    .map_err(|_| CastielError::InternalError)?;
 
   // Create HashMap to store viewed chromecasts and avoid duplication
   let mut seen = HashMap::new();
@@ -105,7 +105,7 @@ pub fn find_chromecasts(search_seconds: u64) -> Result<Vec<DiscoveredDevice>, BC
       Ok(_) | Err(RecvTimeoutError::Timeout) => { /* Continue looping until global timeout */ }
       Err(err) => {
         tracing::error!("mDNS receive error: {err}");
-        return Err(BCError::InternalError);
+        return Err(CastielError::InternalError);
       }
     }
   }

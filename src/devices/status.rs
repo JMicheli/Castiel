@@ -4,7 +4,7 @@ use serde::Serialize;
 
 use crate::{
   devices::app_ids::{BACKDROP_ID, DEFAULT_MEDIA_ID, WEBVIEW_ID, YOUTUBE_ID},
-  errors::BCError,
+  errors::CastielError,
 };
 
 /// The status of a chromecast device. Contains information about the current
@@ -108,14 +108,14 @@ impl From<&str> for ParsedApp {
   }
 }
 
-pub fn get_device_status(ip: &str, port: u16) -> Result<DeviceStatus, BCError> {
+pub fn get_device_status(ip: &str, port: u16) -> Result<DeviceStatus, CastielError> {
   tracing::info!("Getting device status for {ip}:{port}");
   let cast_device = super::get_cast_device(ip, port)?;
 
   let device_status = cast_device
     .receiver
     .get_status()
-    .map_err(BCError::ConnError)?;
+    .map_err(CastielError::ConnError)?;
   Ok(DeviceStatus::from(device_status))
 }
 
@@ -168,23 +168,23 @@ impl From<rust_cast::channels::media::PlayerState> for PlayerState {
   }
 }
 
-pub fn get_media_status(ip: &str, port: u16) -> Result<MediaStatus, BCError> {
+pub fn get_media_status(ip: &str, port: u16) -> Result<MediaStatus, CastielError> {
   tracing::info!("Getting media status for {ip}:{port}");
   let cast_device = super::get_cast_device(ip, port)?;
 
   let device_status = cast_device
     .receiver
     .get_status()
-    .map_err(BCError::ConnError)?;
+    .map_err(CastielError::ConnError)?;
   let app = device_status
     .applications
     .first()
-    .ok_or(BCError::AppLookupFailed)?;
+    .ok_or(CastielError::AppLookupFailed)?;
 
   let media_status = cast_device
     .media
     .get_status(&app.transport_id, None)
-    .map_err(BCError::ConnError)?;
+    .map_err(CastielError::ConnError)?;
 
   Ok(MediaStatus::from(media_status))
 }

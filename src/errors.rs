@@ -1,4 +1,4 @@
-//! Defines an error enum for use throughout Boardcast.
+//! Defines an error enum for use throughout Castiel.
 //!
 //! The error can be transformed into an HTTP response and is used in all
 //! API outputs.
@@ -7,7 +7,7 @@ use axum::{http::StatusCode, response::IntoResponse, response::Response};
 use thiserror::Error;
 
 #[derive(Debug, Error)]
-pub enum BCError {
+pub enum CastielError {
   #[error("Configuration error: {0}")]
   ConfigError(#[from] config::ConfigError),
   #[error("I/O error: {0}")]
@@ -28,7 +28,7 @@ pub enum BCError {
   InternalError,
 }
 
-impl IntoResponse for BCError {
+impl IntoResponse for CastielError {
   fn into_response(self) -> Response {
     let (status, error_message) = match self {
       Self::ConfigError(err) => (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()),

@@ -4,12 +4,12 @@ use serde::{Deserialize, Serialize};
 use std::path::Path;
 
 #[derive(Debug, Deserialize, Serialize)]
-pub struct BoardcastSettings {
+pub struct CastielSettings {
   pub port: u16,
   pub log_level: String,
 }
 
-impl Default for BoardcastSettings {
+impl Default for CastielSettings {
   fn default() -> Self {
     Self {
       port: 3000,
@@ -18,7 +18,7 @@ impl Default for BoardcastSettings {
   }
 }
 
-impl BoardcastSettings {
+impl CastielSettings {
   /// Used to initialize settings from the file at `config_path`. It will create a default config
   /// at that path if none exists.
   ///
@@ -39,7 +39,7 @@ impl BoardcastSettings {
     if settings.log_level.eq_ignore_ascii_case("INFO")
       || settings.log_level.eq_ignore_ascii_case("TRACE")
     {
-      println!("Initialized Boardcast settings: {settings:?}");
+      println!("Initialized Castiel settings: {settings:?}");
     }
 
     Ok(settings)

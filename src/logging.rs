@@ -1,4 +1,4 @@
-//! Contains code for initializing logging in Boardcast.
+//! Contains code for initializing logging in Castiel.
 
 use std::str::FromStr;
 use tracing::level_filters::LevelFilter;

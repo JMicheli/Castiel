@@ -11,7 +11,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
   devices::app_ids::{WEBVIEW_ID, WEBVIEW_NAMESPACE},
-  errors::BCError,
+  errors::CastielError,
 };
 
 #[derive(Debug, Deserialize)]
@@ -49,7 +49,7 @@ pub struct StartMediaData {
 }
 
 /// Starts media using the contents of `StartMediaData`.
-pub fn start_from_data(data: StartMediaData) -> Result<(), BCError> {
+pub fn start_from_data(data: StartMediaData) -> Result<(), CastielError> {
   tracing::info!("Starting media from data: {data:?}");
 
   let ip = data.ip_address.clone();
@@ -74,16 +74,16 @@ fn start_app_and_media(
   cast_device: &CastDevice,
   app_to_start: &CastDeviceApp,
   data: StartMediaData,
-) -> Result<(), BCError> {
+) -> Result<(), CastielError> {
   let app = cast_device
     .receiver
     .launch_app(app_to_start)
-    .map_err(BCError::AppError)?;
+    .map_err(CastielError::AppError)?;
 
   cast_device
     .connection
     .connect(app.transport_id.as_str())
-    .map_err(BCError::ConnError)?;
+    .map_err(CastielError::ConnError)?;
 
   let media = Media {
     content_id: data.media_url,
@@ -96,7 +96,7 @@ fn start_app_and_media(
   cast_device
     .media
     .load(app.transport_id, app.session_id, &media)
-    .map_err(BCError::MediaError)?;
+    .map_err(CastielError::MediaError)?;
 
   Ok(())
 }
@@ -107,19 +107,19 @@ struct WebAppMessage {
   proxy: bool,
 }
 
-fn start_web_media(cast_device: &CastDevice, media_url: String) -> Result<(), BCError> {
+fn start_web_media(cast_device: &CastDevice, media_url: String) -> Result<(), CastielError> {
   // Launch web viewer app
   let app_to_launch = CastDeviceApp::Custom(WEBVIEW_ID.to_string());
   let app = cast_device
     .receiver
     .launch_app(&app_to_launch)
-    .map_err(BCError::AppError)?;
+    .map_err(CastielError::AppError)?;
 
   // Start connection to web viewer
   cast_device
     .connection
     .connect(app.transport_id.as_str())
-    .map_err(BCError::ConnError)?;
+    .map_err(CastielError::ConnError)?;
 
   // Broadcast a message to the running web viewer app
   cast_device
@@ -131,7 +131,7 @@ fn start_web_media(cast_device: &CastDevice, media_url: String) -> Result<(), BC
         proxy: false,
       },
     )
-    .map_err(BCError::MediaError)?;
+    .map_err(CastielError::MediaError)?;
 
   Ok(())
 }

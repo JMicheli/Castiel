@@ -1,4 +1,4 @@
-//! Defines Boardcast's API routes and their handlers.
+//! Defines Castiel's API routes and their handlers.
 
 use axum::{
   Json, Router,
@@ -14,7 +14,7 @@ use crate::{
     media::StartMediaData,
     status::{DeviceStatus, MediaStatus},
   },
-  errors::BCError,
+  errors::CastielError,
 };
 
 /// Creates the main application router.
@@ -34,7 +34,7 @@ pub fn create_router() -> Router {
 /// Handler for the GET /api/chromecasts endpoint.
 ///
 /// Runs device discovery and returns a list of discovered Chromecast devices as JSON.
-async fn get_chromecasts() -> Result<Json<Vec<DiscoveredDevice>>, BCError> {
+async fn get_chromecasts() -> Result<Json<Vec<DiscoveredDevice>>, CastielError> {
   // Search for Chromecasts for 2 seconds
   let devices = devices::discovery::find_chromecasts(1)?;
 
@@ -51,7 +51,7 @@ async fn get_chromecasts() -> Result<Json<Vec<DiscoveredDevice>>, BCError> {
 /// Handler for the POST /api/send-media endpoint.
 ///
 /// Receives media data from the frontend and initiates the media sending process.
-async fn send_media_handler(Json(media_data): Json<StartMediaData>) -> Result<(), BCError> {
+async fn send_media_handler(Json(media_data): Json<StartMediaData>) -> Result<(), CastielError> {
   devices::media::start_from_data(media_data)?;
   Ok(())
 }
@@ -68,14 +68,14 @@ pub struct DeviceAddress {
 /// Checks device status from the provided device address and returns it as JSON.
 async fn check_device_status(
   Json(device_addr): Json<DeviceAddress>,
-) -> Result<Json<DeviceStatus>, BCError> {
+) -> Result<Json<DeviceStatus>, CastielError> {
   let status = devices::status::get_device_status(&device_addr.ip, device_addr.port)?;
   Ok(Json(status))
 }
 
 async fn check_media_status(
   Json(device_addr): Json<DeviceAddress>,
-) -> Result<Json<MediaStatus>, BCError> {
+) -> Result<Json<MediaStatus>, CastielError> {
   let status = devices::status::get_media_status(&device_addr.ip, device_addr.port)?;
   Ok(Json(status))
 }
