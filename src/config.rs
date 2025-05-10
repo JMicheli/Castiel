@@ -10,15 +10,17 @@ pub struct BoardcastSettings {
 
 impl BoardcastSettings {
   pub fn initialize(config_path: &Path) -> Result<Self, Box<dyn std::error::Error>> {
+    // Write default settings file if one does not exist
     if !Path::new(config_path).exists() {
-      let default_settings = Self { port: 3000 };
-      let toml_string = toml::to_string(&default_settings)?;
+      tracing::info!("No Settings.toml found, writing default settings file");
+      let toml_string = toml::to_string(&BoardcastSettings::default())?;
       std::fs::write(config_path, toml_string)?;
     }
 
     let file_content = std::fs::read_to_string(config_path)?;
     let settings: BoardcastSettings = toml::from_str(&file_content)?;
 
+    tracing::info!("Initialized Boardcast settings: {settings:?}");
     Ok(settings)
   }
 }

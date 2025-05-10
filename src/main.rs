@@ -14,6 +14,8 @@ const DEFAULT_CONFIG_PATH: &str = "Settings.toml";
 
 #[tokio::main]
 async fn main() {
+  tracing::info!("Launching Boardcast server");
+
   // Load settings from file
   let settings =
     BoardcastSettings::initialize(Path::new(DEFAULT_CONFIG_PATH)).unwrap_or_else(|err| {
@@ -21,19 +23,21 @@ async fn main() {
       BoardcastSettings::default()
     });
 
+  // Create Axum Router
   let app = routes::create_router();
 
+  // Bind TCP port indicated in settings
   let listener_addr = format!("127.0.0.1:{}", settings.port);
   let listener = TcpListener::bind(&listener_addr)
     .await
     .unwrap_or_else(|_| panic!("Failed to bind to {listener_addr}"));
 
+  // Log and begin serving
   tracing::info!(
     "Listening on {}",
     listener
       .local_addr()
       .expect("Failed to retrieve local address")
   );
-
   axum::serve(listener, app).await.unwrap();
 }
