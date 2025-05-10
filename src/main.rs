@@ -2,6 +2,7 @@
 
 mod config;
 mod devices;
+mod errors;
 mod logging;
 mod routes;
 

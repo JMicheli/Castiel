@@ -2,6 +2,8 @@
 
 use serde::Serialize;
 
+use crate::errors::BCError;
+
 #[derive(Debug, Serialize)]
 pub struct DeviceStatus {
   is_active_input: bool,
@@ -54,10 +56,84 @@ impl From<rust_cast::channels::receiver::Status> for DeviceStatus {
   }
 }
 
-pub fn get_device_status(ip: &str, port: u16) -> Result<DeviceStatus, rust_cast::errors::Error> {
+pub fn get_device_status(ip: &str, port: u16) -> Result<DeviceStatus, BCError> {
   tracing::info!("Getting device status for {ip}:{port}");
   let cast_device = super::get_cast_device(ip, port)?;
 
-  let status = cast_device.receiver.get_status()?;
-  Ok(DeviceStatus::from(status))
+  let device_status = cast_device
+    .receiver
+    .get_status()
+    .map_err(BCError::ConnError)?;
+  Ok(DeviceStatus::from(device_status))
+}
+
+#[derive(Debug, Serialize)]
+pub struct MediaStatus {
+  current_time: Option<f32>,
+  playback_rate: f32,
+  player_state: PlayerState,
+}
+
+#[derive(Debug, Serialize)]
+pub enum PlayerState {
+  Idle,
+  Playing,
+  Buffering,
+  Paused,
+}
+
+impl Default for MediaStatus {
+  fn default() -> Self {
+    Self {
+      current_time: Default::default(),
+      playback_rate: 0.0,
+      player_state: PlayerState::Idle,
+    }
+  }
+}
+
+impl From<rust_cast::channels::media::Status> for MediaStatus {
+  fn from(status: rust_cast::channels::media::Status) -> Self {
+    match status.entries.first() {
+      Some(entry) => Self {
+        current_time: entry.current_time,
+        playback_rate: entry.playback_rate,
+        player_state: entry.player_state.into(),
+      },
+      // TODO - Make sure we're okay with doing it this way
+      None => MediaStatus::default(),
+    }
+  }
+}
+
+impl From<rust_cast::channels::media::PlayerState> for PlayerState {
+  fn from(state: rust_cast::channels::media::PlayerState) -> Self {
+    match state {
+      rust_cast::channels::media::PlayerState::Idle => PlayerState::Idle,
+      rust_cast::channels::media::PlayerState::Playing => PlayerState::Playing,
+      rust_cast::channels::media::PlayerState::Buffering => PlayerState::Buffering,
+      rust_cast::channels::media::PlayerState::Paused => PlayerState::Paused,
+    }
+  }
+}
+
+pub fn get_media_status(ip: &str, port: u16) -> Result<MediaStatus, BCError> {
+  tracing::info!("Getting media status for {ip}:{port}");
+  let cast_device = super::get_cast_device(ip, port)?;
+
+  let device_status = cast_device
+    .receiver
+    .get_status()
+    .map_err(BCError::ConnError)?;
+  let app = device_status
+    .applications
+    .first()
+    .ok_or(BCError::AppLookupFailed)?;
+
+  let media_status = cast_device
+    .media
+    .get_status(&app.transport_id, None)
+    .map_err(BCError::ConnError)?;
+
+  Ok(MediaStatus::from(media_status))
 }

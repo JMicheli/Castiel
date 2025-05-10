@@ -9,6 +9,8 @@ use flume::RecvTimeoutError;
 use mdns_sd::{ServiceDaemon, ServiceEvent, ServiceInfo};
 use serde::Serialize;
 
+use crate::errors::BCError;
+
 /// Used to inform the mdns browse command on what services are being searched for.
 const SERVICE_TYPE: &str = "_googlecast._tcp.local.";
 
@@ -37,7 +39,7 @@ pub struct DiscoveredDevice {
 }
 
 impl TryFrom<ServiceInfo> for DiscoveredDevice {
-  type Error = &'static str;
+  type Error = BCError;
 
   fn try_from(info: ServiceInfo) -> Result<Self, Self::Error> {
     // Grab the first ip address (error if none found)
@@ -47,7 +49,7 @@ impl TryFrom<ServiceInfo> for DiscoveredDevice {
       .map(|addr| addr.to_string())
       .collect::<Vec<_>>()
       .first()
-      .ok_or("ServiceInfo contained no addresses")?
+      .ok_or(BCError::InternalError)?
       .clone();
 
     // Grab the TXT record struct
@@ -77,12 +79,12 @@ impl TryFrom<ServiceInfo> for DiscoveredDevice {
 }
 
 /// Search for chromecasts for as long as the `search_seconds` parameter asks.
-pub fn find_chromecasts(search_seconds: u64) -> Vec<DiscoveredDevice> {
+pub fn find_chromecasts(search_seconds: u64) -> Result<Vec<DiscoveredDevice>, BCError> {
   // Create daemon and receiver
-  let mdns = ServiceDaemon::new().expect("Failed to create mDNS daemon.");
+  let mdns = ServiceDaemon::new().map_err(|_| BCError::InternalError)?;
   let receiver = mdns
     .browse(SERVICE_TYPE)
-    .expect("Failed to browse mDNS services.");
+    .map_err(|_| BCError::InternalError)?;
 
   // Create HashMap to store viewed chromecasts and avoid duplication
   let mut seen = HashMap::new();
@@ -101,17 +103,15 @@ pub fn find_chromecasts(search_seconds: u64) -> Vec<DiscoveredDevice> {
         }
       }
       Ok(_) => { /* ignore other events */ }
-      Err(RecvTimeoutError::Timeout) => {
-        // no events in this interval → keep looping until global timeout
-      }
+      Err(RecvTimeoutError::Timeout) => { /* Continue looping until global timeout */ }
       Err(err) => {
         tracing::error!("mDNS receive error: {err}");
-        break;
+        return Err(BCError::InternalError);
       }
     }
   }
 
   // Stop service daemon and return list
   let _ = mdns.stop_browse(SERVICE_TYPE);
-  seen.into_values().collect()
+  Ok(seen.into_values().collect())
 }

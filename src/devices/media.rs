@@ -9,6 +9,8 @@ use rust_cast::{
 };
 use serde::{Deserialize, Serialize};
 
+use crate::errors::BCError;
+
 #[derive(Debug, Deserialize)]
 pub enum ReceiverOptions {
   Default,
@@ -44,7 +46,7 @@ pub struct StartMediaData {
 }
 
 /// Starts media using the contents of `StartMediaData`.
-pub fn start_from_data(data: StartMediaData) -> Result<(), rust_cast::errors::Error> {
+pub fn start_from_data(data: StartMediaData) -> Result<(), BCError> {
   tracing::info!("Starting media from data: {data:?}");
 
   let ip = data.ip_address.clone();
@@ -69,10 +71,16 @@ fn start_app_and_media(
   cast_device: CastDevice,
   app_to_start: CastDeviceApp,
   data: StartMediaData,
-) -> Result<(), rust_cast::errors::Error> {
-  let app = cast_device.receiver.launch_app(&app_to_start)?;
+) -> Result<(), BCError> {
+  let app = cast_device
+    .receiver
+    .launch_app(&app_to_start)
+    .map_err(BCError::AppError)?;
 
-  cast_device.connection.connect(app.transport_id.as_str())?;
+  cast_device
+    .connection
+    .connect(app.transport_id.as_str())
+    .map_err(BCError::ConnError)?;
 
   let media = Media {
     content_id: data.media_url,
@@ -84,7 +92,8 @@ fn start_app_and_media(
 
   cast_device
     .media
-    .load(app.transport_id, app.session_id, &media)?;
+    .load(app.transport_id, app.session_id, &media)
+    .map_err(BCError::MediaError)?;
 
   Ok(())
 }
@@ -103,25 +112,31 @@ struct WebAppMessage {
   proxy: bool,
 }
 
-fn start_web_media(
-  cast_device: CastDevice,
-  media_url: String,
-) -> Result<(), rust_cast::errors::Error> {
+fn start_web_media(cast_device: CastDevice, media_url: String) -> Result<(), BCError> {
   // Launch web viewer app
   let app_to_launch = CastDeviceApp::Custom(WEB_APP_ID.to_string());
-  let app = cast_device.receiver.launch_app(&app_to_launch)?;
+  let app = cast_device
+    .receiver
+    .launch_app(&app_to_launch)
+    .map_err(BCError::AppError)?;
 
   // Start connection to web viewer
-  cast_device.connection.connect(app.transport_id.as_str())?;
+  cast_device
+    .connection
+    .connect(app.transport_id.as_str())
+    .map_err(BCError::ConnError)?;
 
   // Broadcast a message to the running web viewer app
-  cast_device.receiver.broadcast_message(
-    WEB_APP_NAMESPACE,
-    &WebAppMessage {
-      url: media_url,
-      proxy: false,
-    },
-  )?;
+  cast_device
+    .receiver
+    .broadcast_message(
+      WEB_APP_NAMESPACE,
+      &WebAppMessage {
+        url: media_url,
+        proxy: false,
+      },
+    )
+    .map_err(BCError::MediaError)?;
 
   Ok(())
 }

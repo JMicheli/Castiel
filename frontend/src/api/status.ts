@@ -1,6 +1,8 @@
-interface VolumeStatus {
-  volume: number;
-  muted: boolean;
+export interface DeviceStatus {
+  isActiveInput: boolean;
+  inStandby: boolean;
+  volume: VolumeStatus;
+  appStatus: AppStatus[];
 }
 
 interface AppStatus {
@@ -12,15 +14,13 @@ interface AppStatus {
   transportId: string;
 }
 
-export interface DeviceStatus {
-  isActiveInput: boolean;
-  inStandby: boolean;
-  volume: VolumeStatus;
-  appStatus: AppStatus[];
+interface VolumeStatus {
+  volume: number;
+  muted: boolean;
 }
 
 /**
- * Fetches the status of a specific Chromecast device.
+ * Fetches the status of a Chromecast device.
  *
  * @param ip The IP address of the device.
  * @param port The port of the device.
@@ -44,4 +44,39 @@ export async function fetchDeviceStatus(
 
   const data = await response.json();
   return data as DeviceStatus;
+}
+
+export interface MediaStatus {
+  current_time?: number;
+  playback_rate: number;
+  player_state: PlayerState;
+}
+
+export type PlayerState = "Idle" | "Playing" | "Buffering" | "Paused";
+
+/**
+ * Fetches the status of media playing on a Chromecast device.
+ *
+ * @param ip The IP address of the device.
+ * @param port The port of the device.
+ * @returns A promise that resolves with the media status.
+ */
+export async function fetchMediaStatus(
+  ip: string,
+  port: number
+): Promise<MediaStatus> {
+  const response = await fetch("/api/media-status", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ ip, port }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch media status: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  return data as MediaStatus;
 }

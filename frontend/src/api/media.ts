@@ -49,6 +49,7 @@ export async function sendMediaToReceiver(
     console.log("Media data sent successfully!");
   } catch (error) {
     console.error("Error sending media data:", error);
-    throw error; // Re-throw to allow calling component to handle
+    // Re-throw to allow calling component to handle
+    throw error;
   }
 }
