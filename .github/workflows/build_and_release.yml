@@ -49,7 +49,7 @@ jobs:
           npm run build
       
       - name: Upload frontend distribution artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: frontend-dist
           path: frontend/dist/
@@ -94,7 +94,7 @@ jobs:
           mv target/release/${{ matrix.binary_name }} final_assembly/${{ matrix.binary_name }} \
       
       - name: Download frontend distribution artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: basic-example-assets
           path: final_assembly/dist
