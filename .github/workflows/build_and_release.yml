@@ -91,7 +91,8 @@ jobs:
       - name: Collect build results for upload and zip them
         run: |
           mkdir final_assembly && mkdir final_assembly/dist
-          mv target/release/${{ matrix.binary_name }} final_assembly/${{ matrix.binary_name }}
+          mv target/${{ matrix.target }}/release/${{ matrix.binary_name }} \
+             final_assembly/${{ matrix.binary_name }}
       
       - name: Download frontend distribution artifact
         uses: actions/download-artifact@v4
