@@ -55,8 +55,9 @@ jobs:
           path: frontend/dist/
 
   # Build the release for each platform
-  build-castiel:
+  build-castiel-release:
     needs: [create-release, build-frontend]
+    permissions: write-all
     strategy:
       matrix:
         include:
