@@ -1,0 +1,88 @@
+name: Build and Release
+
+# Release when a tag like v0.1.0 is pushed
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  create-release:
+    outputs:
+      upload_url: ${{ steps.release.outputs.upload_url }}
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      - name: Create GitHub Release
+        id: release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          body_path: changelog.md
+          draft: true
+          prerelease: false
+
+  # Build the release for each platform
+  build-castiel:
+    needs: create-release
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        target: [x86_64-unknown-linux-gnu, x86_64-pc-windows-msvc]
+        binary_name: [castiel, castiel.exe]
+        release_artifact_name: [Castiel-x64-Linux, Castiel-x64-Windows]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+
+      - name: Build frontend
+        working-directory: ./frontend
+        run: | 
+          npm install \
+          npm run build
+      
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Build Castiel binary
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release --target ${{ matrix.target }}
+      
+      - name: Collect build results for upload and zip them
+        run: |
+          mkdir final_assembly && mkdir final_assembly/dist \
+          mv frontend/dist/* final_assembly/dist \
+          mv target/release/${{ matrix.binary_name }} final_assembly/${{ matrix.binary_name }} \
+          sudo apt-get install -y zip \ 
+          cd final_assembly \
+          zip -r ../build-results.zip *
+          cd ..
+
+      - name: Upload release artifact (Linux)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: build-results.zip 
+          asset_name: ${{ matrix.release_artifact_name }}.zip
+          asset_content_type: application/zip

@@ -5,7 +5,10 @@ use axum::{
   routing::{get, post},
 };
 use serde::Deserialize;
-use tower_http::services::{ServeDir, ServeFile};
+use tower_http::{
+  services::{ServeDir, ServeFile},
+  set_status::SetStatus,
+};
 
 use crate::{
   devices::{
@@ -20,8 +23,7 @@ use crate::{
 /// Creates the main application router.
 pub fn create_router() -> Router {
   // Static file server for frontend.
-  let serve_dir =
-    ServeDir::new("frontend/dist").not_found_service(ServeFile::new("frontend/dist/index.html"));
+  let serve_dir = create_static_fileserver();
 
   Router::new()
     .route("/api/chromecasts", get(get_chromecasts))
@@ -29,6 +31,18 @@ pub fn create_router() -> Router {
     .route("/api/device-status", post(check_device_status))
     .route("/api/media-status", post(check_media_status))
     .fallback_service(serve_dir)
+}
+
+/// Creates the static fileserver service.
+///
+/// The directory `./frontend/dist` relative to the crate root is used as the development path served,
+/// but during release `./dist` relative to the binary is used instead.
+fn create_static_fileserver() -> ServeDir<SetStatus<ServeFile>> {
+  if cfg!(debug_assertions) {
+    ServeDir::new("frontend/dist").not_found_service(ServeFile::new("frontend/dist/index.html"))
+  } else {
+    ServeDir::new("dist").not_found_service(ServeFile::new("dist/index.html"))
+  }
 }
 
 /// Handler for the GET /api/chromecasts endpoint.

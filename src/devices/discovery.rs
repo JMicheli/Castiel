@@ -80,6 +80,8 @@ impl TryFrom<ServiceInfo> for DiscoveredDevice {
 
 /// Search for chromecasts for as long as the `search_seconds` parameter asks.
 pub fn find_chromecasts(search_seconds: u64) -> Result<Vec<DiscoveredDevice>, CastielError> {
+  tracing::info!("Starting mDNS Daemon");
+
   // Create daemon and receiver
   let mdns = ServiceDaemon::new().map_err(|_| CastielError::InternalError)?;
   let receiver = mdns
