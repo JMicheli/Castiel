@@ -45,14 +45,14 @@ jobs:
       - name: Build frontend
         working-directory: ./frontend
         run: | 
-          npm install \
+          npm install
           npm run build
       
       - name: Upload frontend distribution artifact
         uses: actions/upload-artifact@v4
         with:
           name: frontend-dist
-          path: ./frontend/dist/
+          path: frontend/dist/
 
   # Build the release for each platform
   build-castiel:
@@ -90,8 +90,8 @@ jobs:
       
       - name: Collect build results for upload and zip them
         run: |
-          mkdir final_assembly && mkdir final_assembly/dist \
-          mv target/release/${{ matrix.binary_name }} final_assembly/${{ matrix.binary_name }} \
+          mkdir final_assembly && mkdir final_assembly/dist
+          mv target/release/${{ matrix.binary_name }} final_assembly/${{ matrix.binary_name }}
       
       - name: Download frontend distribution artifact
         uses: actions/download-artifact@v4
@@ -101,8 +101,8 @@ jobs:
 
       - name: Zip build results to prepare for upload
         run: |
-          sudo apt-get install -y zip \ 
-          cd final_assembly \
+          sudo apt-get install -y zip
+          cd final_assembly
           zip -r ../build-results.zip *
           cd ..
 
