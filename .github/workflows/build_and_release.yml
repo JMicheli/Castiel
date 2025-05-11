@@ -90,6 +90,7 @@ jobs:
           args: --release --target ${{ matrix.target }}
       
       - name: Collect build results for upload and zip them
+        shell: bash
         run: |
           mkdir final_assembly && mkdir final_assembly/dist
           mv target/${{ matrix.target }}/release/${{ matrix.binary_name }} \
