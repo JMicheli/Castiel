@@ -43,7 +43,7 @@ pub struct AppStatus {
   /// This value will be [`ParsedApp:Unknown`] if not recognized.
   app_identity: ParsedApp,
   /// The display name of the application.
-  diplay_name: String,
+  display_name: String,
   /// The namespaces used by the application.
   namespaces: Vec<String>,
   /// The session id of the application.
@@ -87,7 +87,7 @@ impl From<rust_cast::channels::receiver::Application> for AppStatus {
     Self {
       id: app.app_id,
       app_identity,
-      diplay_name: app.display_name,
+      display_name: app.display_name,
       namespaces: app.namespaces,
       session_id: app.session_id,
       status: app.status_text,

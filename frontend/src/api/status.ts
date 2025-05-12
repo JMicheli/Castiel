@@ -1,8 +1,8 @@
 export interface DeviceStatus {
-  isActiveInput: boolean;
-  inStandby: boolean;
+  is_active_input: boolean;
+  in_standby: boolean;
   volume: VolumeStatus;
-  appStatus?: AppStatus;
+  app_status?: AppStatus;
 }
 
 interface VolumeStatus {
@@ -13,11 +13,11 @@ interface VolumeStatus {
 interface AppStatus {
   id: string;
   app_identity: ParsedApp;
-  displayName: string;
+  display_name: string;
   namespaces: string[];
-  sessionId: string;
+  session_id: string;
   status: string;
-  transportId: string;
+  transport_id: string;
 }
 
 export type ParsedApp =

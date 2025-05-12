@@ -28,7 +28,7 @@ function ChromecastCard({ device, onSelect }: ChromecastCardProps) {
   );
 
   // Pull variables out of status
-  const appStatus = status?.appStatus;
+  const appStatus = status?.app_status;
   const appIdentity = appStatus?.app_identity ?? "Unknown";
 
   const handleRefresh = (e: React.MouseEvent) => {

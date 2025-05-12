@@ -31,7 +31,7 @@ export default function DeviceMediaInfo({ appIdentity }: DeviceMediaInfoProps) {
     },
     DefaultMedia: {
       icon: <MonitorPlay size={48} className="has-text-info" />,
-      label: "Default Receiver",
+      label: "Default Media Receiver",
       bgClass: "has-background-info-light",
       textClass: "has-text-info",
     },
@@ -42,7 +42,7 @@ export default function DeviceMediaInfo({ appIdentity }: DeviceMediaInfoProps) {
       textClass: "has-text-white",
     },
 
-    WebViewer: {
+    WebView: {
       icon: <GlobeSimple size={48} className="has-text-link" />,
       label: "Web Viewer",
       bgClass: "has-background-link-light",
