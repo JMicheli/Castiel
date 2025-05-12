@@ -2,7 +2,7 @@ export interface DeviceStatus {
   isActiveInput: boolean;
   inStandby: boolean;
   volume: VolumeStatus;
-  appStatus: AppStatus[];
+  appStatus?: AppStatus;
 }
 
 interface VolumeStatus {
@@ -13,14 +13,14 @@ interface VolumeStatus {
 interface AppStatus {
   id: string;
   app_identity: ParsedApp;
-  diplayName: string;
+  displayName: string;
   namespaces: string[];
   sessionId: string;
   status: string;
   transportId: string;
 }
 
-type ParsedApp =
+export type ParsedApp =
   | "Backdrop"
   | "DefaultMedia"
   | "YouTube"

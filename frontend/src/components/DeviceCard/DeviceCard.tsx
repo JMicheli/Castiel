@@ -20,12 +20,16 @@ interface ChromecastCardProps {
  */
 function ChromecastCard({ device, onSelect }: ChromecastCardProps) {
   const [showInfoModal, setShowInfoModal] = useState(false); // State for the new info modal
-  const [showMediaSettings, setShowStartMedia] = useState(false);
+  const [showStartMedia, setShowStartMedia] = useState(false);
 
-  const { /*status, loading, error,*/ refreshStatus } = useChromecastStatus(
+  const { status, /*loading, error,*/ refreshStatus } = useChromecastStatus(
     device.ip_address,
     device.port
   );
+
+  // Pull variables out of status
+  const appStatus = status?.appStatus;
+  const appIdentity = appStatus?.app_identity ?? "Unknown";
 
   const handleRefresh = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -73,7 +77,7 @@ function ChromecastCard({ device, onSelect }: ChromecastCardProps) {
             >{`${device.ip_address}:${device.port}`}</p>
 
             {/* Display of currently playing media and player controls */}
-            <DeviceMediaInfo />
+            <DeviceMediaInfo appIdentity={appIdentity} />
 
             {/* Buttons for info / refresh / casting */}
             <DeviceCardButtons
@@ -88,7 +92,7 @@ function ChromecastCard({ device, onSelect }: ChromecastCardProps) {
       {/* Media settings modal */}
       <StartMediaModal
         device={device}
-        isOpen={showMediaSettings}
+        isOpen={showStartMedia}
         onClose={() => setShowStartMedia(false)}
       />
 
