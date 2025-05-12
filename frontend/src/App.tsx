@@ -1,4 +1,4 @@
-import ChromecastCard from "./components/ChromecastCard";
+import ChromecastCard from "./components/DeviceCard/DeviceCard";
 import Navbar from "./components/Navbar";
 import { useChromecastDiscovery } from "./hooks/useChromecastDiscovery";
 

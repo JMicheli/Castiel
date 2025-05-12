@@ -1,29 +1,25 @@
 import { useState } from "react";
-import type { DiscoveredDevice } from "../api/discovery";
+import type { DiscoveredDevice } from "@api/discovery";
 import {
   sendMediaToReceiver,
   type ReceiverOptions,
   type StreamTypeOptions,
-} from "../api/media";
+} from "@api/media";
 
-interface MediaSettingsModalProps {
+interface StartMediaProps {
   device: DiscoveredDevice;
   onClose: () => void;
   isOpen: boolean;
 }
 
 /**
- * Modal component for controlling Chromecast media settings.
+ * Modal component for starting new Chromecast media.
  *
  * @param device - The Chromecast device to control.
  * @param onClose - Function to call when closing the modal.
  * @param isOpen - Whether the modal is currently open.
  */
-function MediaSettingsModal({
-  device,
-  onClose,
-  isOpen,
-}: MediaSettingsModalProps) {
+function StartMedia({ device, onClose, isOpen }: StartMediaProps) {
   const [receiverType, setReceiverType] = useState<ReceiverOptions>("Default");
   const [contentId, setContentId] = useState("");
   const [contentType, setContentType] = useState("");
@@ -150,4 +146,4 @@ function MediaSettingsModal({
   );
 }
 
-export default MediaSettingsModal;
+export default StartMedia;

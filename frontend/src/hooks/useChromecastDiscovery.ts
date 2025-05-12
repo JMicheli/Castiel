@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import type { DiscoveredDevice } from "../api/discovery";
-import { fetchChromecasts } from "../api/discovery";
+import { type DiscoveredDevice, fetchChromecasts } from "@api/discovery";
 
 interface UseChromecastDiscoveryResult {
   /** List of discovered Chromecast devices */

@@ -1,8 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import {
-  fetchDeviceStatus as fetchStatusApi,
-  type DeviceStatus,
-} from "../api/status";
+import { fetchDeviceStatus, type DeviceStatus } from "@api/status";
 
 interface UseChromecastStatusResult {
   /** The status of the Chromecast device */
@@ -33,12 +30,12 @@ export function useChromecastStatus(
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const fetchDeviceStatus = useCallback(async (ip: string, port: number) => {
+  const deviceStatusCallback = useCallback(async (ip: string, port: number) => {
     setLoading(true);
     setError(null);
 
     try {
-      const deviceStatus = await fetchStatusApi(ip, port);
+      const deviceStatus = await fetchDeviceStatus(ip, port);
       setStatus(deviceStatus);
     } catch (err) {
       setError(
@@ -50,15 +47,15 @@ export function useChromecastStatus(
   }, []);
 
   const refreshStatus = useCallback(async () => {
-    fetchDeviceStatus(ip, port);
-  }, [ip, port, fetchDeviceStatus]);
+    deviceStatusCallback(ip, port);
+  }, [ip, port, deviceStatusCallback]);
 
   // Fetch status on mount
   useEffect(() => {
     if (ip && port) {
-      fetchDeviceStatus(ip, port);
+      deviceStatusCallback(ip, port);
     }
-  }, [ip, port, fetchDeviceStatus]);
+  }, [ip, port, deviceStatusCallback]);
 
   return {
     status,
