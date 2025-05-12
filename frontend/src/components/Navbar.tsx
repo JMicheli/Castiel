@@ -9,10 +9,6 @@ function Navbar() {
             Home
           </Link>
 
-          <Link to="/settings" className="navbar-item">
-            Settings
-          </Link>
-
           <Link to="/about" className="navbar-item">
             About
           </Link>
