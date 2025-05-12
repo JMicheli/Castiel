@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { DiscoveredDevice } from "@api/discovery";
+import { stopMediaAtReceiver } from "@api/media";
 import StartMediaModal from "./StartMediaModal";
 import DeviceInfoModal from "./DeviceInfoModal";
 import { useChromecastStatus } from "@hooks/useChromecastStatus";
@@ -30,6 +31,7 @@ function ChromecastCard({ device, onSelect }: ChromecastCardProps) {
   // Pull variables out of status
   const appStatus = status?.app_status;
   const appIdentity = appStatus?.app_identity ?? "Unknown";
+  const stopButtonEnabled = appIdentity != "Backdrop";
 
   const handleRefresh = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -43,7 +45,12 @@ function ChromecastCard({ device, onSelect }: ChromecastCardProps) {
 
   const handleInfoClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setShowInfoModal(true); // Open the info modal
+    setShowInfoModal(true);
+  };
+
+  const handleStop = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    stopMediaAtReceiver(device);
   };
 
   const handleClick = () => {
@@ -84,6 +91,8 @@ function ChromecastCard({ device, onSelect }: ChromecastCardProps) {
               handleInfoClick={handleInfoClick}
               handleStartMedia={handleStartMedia}
               handleRefresh={handleRefresh}
+              handleStop={handleStop}
+              allowStop={stopButtonEnabled}
             />
           </div>
         </div>

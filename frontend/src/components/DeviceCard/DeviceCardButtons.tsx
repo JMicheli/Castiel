@@ -1,32 +1,40 @@
 import { SiChromecast } from "@icons-pack/react-simple-icons";
-import { ArrowClockwise, Info } from "@phosphor-icons/react";
+import { ArrowClockwise, Info, XSquare } from "@phosphor-icons/react";
 
 interface DeviceCardButtonsProps {
   handleInfoClick: (e: React.MouseEvent) => void;
   handleRefresh: (e: React.MouseEvent) => void;
   handleStartMedia: (e: React.MouseEvent) => void;
+  handleStop: (e: React.MouseEvent) => void;
+  allowStop: boolean;
 }
 
 function DeviceCardButtons({
   handleInfoClick,
   handleRefresh,
   handleStartMedia,
+  handleStop,
+  allowStop,
 }: DeviceCardButtonsProps) {
+  const stopButtonClasses = allowStop ? "is-danger" : "is-danger is-light";
+  const stopButtonText = allowStop
+    ? "has-text-grey-dark"
+    : "has-text-danger-light";
+
   return (
     <div className="columns is-mobile is-vcentered mt-3">
-      <div className="column is-narrow is-offset-auto">
-        <div className="buttons is-small is-grouped is-right">
-          {/* Info button */}
+      {/* Three primary media controls */}
+      <div className="column">
+        <div className="buttons is-small is-grouped">
           <button
             className="button is-small"
             title="Show device info"
-            onClick={handleInfoClick} // Use the new handler
+            onClick={handleInfoClick}
           >
             <span className="icon">
               <Info size={16} />
             </span>
           </button>
-          {/* Refresh button */}
           <button
             className="button is-small"
             title="Refresh device"
@@ -36,7 +44,6 @@ function DeviceCardButtons({
               <ArrowClockwise size={16} />
             </span>
           </button>
-          {/* Cast button */}
           <button
             className="button is-small is-info"
             title="Media settings"
@@ -47,6 +54,20 @@ function DeviceCardButtons({
             </span>
           </button>
         </div>
+      </div>
+
+      {/* Stop button is on the right side of the columns */}
+      <div className="column is-narrow">
+        <button
+          className={`button is-small ${stopButtonClasses}`}
+          title="Stop media"
+          onClick={handleStop}
+          disabled={!allowStop}
+        >
+          <span className="icon">
+            <XSquare size={16} className={stopButtonText} />
+          </span>
+        </button>
       </div>
     </div>
   );

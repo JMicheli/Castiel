@@ -45,11 +45,41 @@ export async function sendMediaToReceiver(
         `Failed to send media to receiver: ${response.status} ${response.statusText}`
       );
     }
-
-    console.log("Media data sent successfully!");
   } catch (error) {
     console.error("Error sending media data:", error);
-    // Re-throw to allow calling component to handle
+    throw error;
+  }
+}
+
+/**
+ * Tells a specific Chromecast receiver to stop playing media.
+ *
+ * @param device - The Chromecast device to send media to.
+ * @param mediaSettings - The media settings (receiver type, content ID, etc.).
+ * @returns Promise resolving when the media data is sent.
+ */
+export async function stopMediaAtReceiver(
+  device: DiscoveredDevice
+): Promise<void> {
+  try {
+    const response = await fetch("api/stop-media", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ip: device.ip_address,
+        port: device.port,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to send stop media request to receiver: ${response.status} ${response.statusText}`
+      );
+    }
+  } catch (error) {
+    console.error("Error sending media stop request:", error);
     throw error;
   }
 }

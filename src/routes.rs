@@ -4,7 +4,7 @@ use axum::{
   Json, Router,
   routing::{get, post},
 };
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use tower_http::{
   services::{ServeDir, ServeFile},
   set_status::SetStatus,
@@ -12,7 +12,7 @@ use tower_http::{
 
 use crate::{
   devices::{
-    self,
+    self, DeviceAddress,
     discovery::DiscoveredDevice,
     media::StartMediaData,
     status::{DeviceStatus, MediaStatus},
@@ -28,7 +28,8 @@ pub fn create_router() -> Router {
   Router::new()
     .route("/api/chromecasts", get(get_chromecasts))
     .route("/api/version", get(get_version))
-    .route("/api/start-media", post(send_media_handler))
+    .route("/api/start-media", post(start_media))
+    .route("/api/stop-media", post(stop_media))
     .route("/api/device-status", post(check_device_status))
     .route("/api/media-status", post(check_media_status))
     .fallback_service(serve_dir)
@@ -66,16 +67,17 @@ async fn get_chromecasts() -> Result<Json<Vec<DiscoveredDevice>>, CastielError> 
 /// Handler for the POST /api/send-media endpoint.
 ///
 /// Receives media data from the frontend and initiates the media sending process.
-async fn send_media_handler(Json(media_data): Json<StartMediaData>) -> Result<(), CastielError> {
+async fn start_media(Json(media_data): Json<StartMediaData>) -> Result<(), CastielError> {
   devices::media::start_from_data(media_data)?;
   Ok(())
 }
 
-#[derive(Debug, Deserialize)]
-/// A serialization structure for a device address sent in an API request.
-pub struct DeviceAddress {
-  pub ip: String,
-  pub port: u16,
+/// Handler for the POST /api/stop-media endpoint.
+///
+/// Receives a device address from the frontend and stops media on that device.
+async fn stop_media(Json(device_addr): Json<DeviceAddress>) -> Result<(), CastielError> {
+  devices::media::stop_media_at_device(device_addr)?;
+  Ok(())
 }
 
 /// Handler for the GET /api/device-status endpoint.
