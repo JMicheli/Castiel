@@ -5,6 +5,11 @@ import path from "path";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  define: {
+    "process.env.VITE_APP_VERSION": JSON.stringify(
+      process.env.npm_package_version
+    ),
+  },
   resolve: {
     alias: {
       "@api": path.resolve(__dirname, "src/api"),

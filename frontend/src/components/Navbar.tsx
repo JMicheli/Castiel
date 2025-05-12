@@ -1,13 +1,21 @@
+import { Link } from "react-router-dom";
+
 function Navbar() {
   return (
     <nav className="navbar" role="navigation" aria-label="main navigation">
       <div id="navbarBasicExample" className="navbar-menu">
         <div className="navbar-start">
-          <a className="navbar-item">Home</a>
+          <Link to="/" className="navbar-item">
+            Home
+          </Link>
 
-          <a className="navbar-item">Settings</a>
+          <Link to="/settings" className="navbar-item">
+            Settings
+          </Link>
 
-          <a className="navbar-item">About</a>
+          <Link to="/about" className="navbar-item">
+            About
+          </Link>
         </div>
       </div>
     </nav>

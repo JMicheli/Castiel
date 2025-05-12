@@ -4,7 +4,7 @@ use axum::{
   Json, Router,
   routing::{get, post},
 };
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use tower_http::{
   services::{ServeDir, ServeFile},
   set_status::SetStatus,
@@ -27,6 +27,7 @@ pub fn create_router() -> Router {
 
   Router::new()
     .route("/api/chromecasts", get(get_chromecasts))
+    .route("/api/version", get(get_version))
     .route("/api/start-media", post(send_media_handler))
     .route("/api/device-status", post(check_device_status))
     .route("/api/media-status", post(check_media_status))
@@ -92,4 +93,17 @@ async fn check_media_status(
 ) -> Result<Json<MediaStatus>, CastielError> {
   let status = devices::status::get_media_status(&device_addr.ip, device_addr.port)?;
   Ok(Json(status))
+}
+
+#[derive(Serialize)]
+struct VersionResponse {
+  version: String,
+}
+
+async fn get_version() -> Result<Json<VersionResponse>, CastielError> {
+  const VERSION: &str = env!("CARGO_PKG_VERSION");
+
+  Ok(Json(VersionResponse {
+    version: VERSION.to_string(),
+  }))
 }
