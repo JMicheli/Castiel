@@ -5,6 +5,7 @@ import {
   type ReceiverOptions,
   type StreamTypeOptions,
 } from "@api/media";
+import { useDeviceStatusContext } from "@contexts/deviceStatusContext";
 
 interface StartMediaProps {
   device: DiscoveredDevice;
@@ -19,7 +20,13 @@ interface StartMediaProps {
  * @param onClose - Function to call when closing the modal.
  * @param isOpen - Whether the modal is currently open.
  */
-function StartMedia({ device, onClose, isOpen }: StartMediaProps) {
+export default function StartMediaModal({
+  device,
+  onClose,
+  isOpen,
+}: StartMediaProps) {
+  const { refreshStatus } = useDeviceStatusContext();
+
   const [receiverType, setReceiverType] = useState<ReceiverOptions>("Default");
   const [contentId, setContentId] = useState("");
   const [contentType, setContentType] = useState("");
@@ -27,15 +34,16 @@ function StartMedia({ device, onClose, isOpen }: StartMediaProps) {
 
   const handleSendMedia = async () => {
     try {
-      // Send media
+      // Send media the media to be started
       await sendMediaToReceiver(device, {
         receiver: receiverType,
         mediaUrl: contentId,
         contentType,
         streamType,
       });
+      // Refresh device status
+      refreshStatus();
     } catch (error) {
-      // Handle error, e.g., show an error message
       console.error("Failed to send media:", error);
     }
   };
@@ -145,5 +153,3 @@ function StartMedia({ device, onClose, isOpen }: StartMediaProps) {
     </div>
   );
 }
-
-export default StartMedia;

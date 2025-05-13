@@ -1,3 +1,4 @@
+import { useDeviceStatusContext } from "@contexts/deviceStatusContext";
 import {
   Question,
   YoutubeLogo,
@@ -6,13 +7,12 @@ import {
   GlobeSimple,
 } from "@phosphor-icons/react";
 import type { JSX } from "react";
-import { type ParsedApp } from "@api/status";
 
-interface DeviceMediaInfoProps {
-  appIdentity: ParsedApp;
-}
+export default function DeviceMediaInfo() {
+  const { status } = useDeviceStatusContext();
 
-export default function DeviceMediaInfo({ appIdentity }: DeviceMediaInfoProps) {
+  const appIdentity = status?.app_status?.app_identity ?? "Unknown";
+
   // Config per appIdentity
   const configs: Record<
     string,

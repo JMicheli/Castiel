@@ -1,4 +1,3 @@
-import React from "react";
 import type { DiscoveredDevice } from "@api/discovery";
 
 interface DeviceInfoModalProps {
@@ -7,11 +6,11 @@ interface DeviceInfoModalProps {
   onClose: () => void;
 }
 
-const DeviceInfoModal: React.FC<DeviceInfoModalProps> = ({
+export default function DeviceInfoModal({
   device,
   isActive,
   onClose,
-}) => {
+}: DeviceInfoModalProps) {
   const modalClass = `modal ${isActive ? "is-active" : ""}`;
 
   return (
@@ -19,7 +18,7 @@ const DeviceInfoModal: React.FC<DeviceInfoModalProps> = ({
       <div className="modal-background" onClick={onClose}></div>
       <div className="modal-card">
         <header className="modal-card-head">
-          <p className="modal-card-title">Chromecast Information</p>
+          <p className="modal-card-title">Device Information</p>
           <button
             className="delete"
             aria-label="close"
@@ -62,6 +61,4 @@ const DeviceInfoModal: React.FC<DeviceInfoModalProps> = ({
       </div>
     </div>
   );
-};
-
-export default DeviceInfoModal;
+}

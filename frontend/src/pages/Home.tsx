@@ -1,7 +1,7 @@
 import { useDeviceDiscovery } from "@hooks/useDeviceDiscovery";
 import DeviceCard from "@components/DeviceCard/DeviceCard";
 
-function Home() {
+export default function Home() {
   const { devices, loading, error, refreshDevices } = useDeviceDiscovery(true);
 
   return (
@@ -57,5 +57,3 @@ function Home() {
     </>
   );
 }
-
-export default Home;

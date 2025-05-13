@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-function Navbar() {
+export default function Navbar() {
   return (
     <nav className="navbar" role="navigation" aria-label="main navigation">
       <div id="navbarBasicExample" className="navbar-menu">
@@ -17,5 +17,3 @@ function Navbar() {
     </nav>
   );
 }
-
-export default Navbar;

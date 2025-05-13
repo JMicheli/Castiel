@@ -12,7 +12,9 @@
     "paths": {
       "@api/*": ["api/*"],
       "@components/*": ["components/*"],
-      "@hooks/*": ["hooks/*"]
+      "@contexts/*": ["contexts/*"],
+      "@hooks/*": ["hooks/*"],
+      "@providers/*": ["providers/*"]
     },
 
     /* Bundler mode */

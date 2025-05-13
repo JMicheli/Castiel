@@ -3,7 +3,7 @@ import Navbar from "@components/Navbar";
 import About from "./pages/About";
 import Home from "./pages/Home";
 
-function App() {
+export default function App() {
   return (
     <BrowserRouter>
       <div className="App">
@@ -18,5 +18,3 @@ function App() {
     </BrowserRouter>
   );
 }
-
-export default App;

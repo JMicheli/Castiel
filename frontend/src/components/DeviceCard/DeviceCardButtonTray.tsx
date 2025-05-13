@@ -1,3 +1,6 @@
+import type { DiscoveredDevice } from "@api/discovery";
+import { stopMediaAtReceiver } from "@api/media";
+import { useDeviceStatusContext } from "@contexts/deviceStatusContext";
 import { SiChromecast } from "@icons-pack/react-simple-icons";
 import { ArrowClockwise, Info, XSquare } from "@phosphor-icons/react";
 
@@ -5,28 +8,40 @@ import { ArrowClockwise, Info, XSquare } from "@phosphor-icons/react";
 interface DeviceCardButtonTrayProps {
   /** The callback function for when the info button is pressed. */
   handleInfoClick: (e: React.MouseEvent) => void;
-  /** The callback function for when the refresh button is pressed. */
-  handleRefresh: (e: React.MouseEvent) => void;
   /** The callback function for when the media start button is pressed. */
   handleStartMedia: (e: React.MouseEvent) => void;
-  /** The callback function for when the media stop button is pressed. */
-  handleStop: (e: React.MouseEvent) => void;
-  /** Whether the media stop button should be active. */
-  allowStop: boolean;
+  /** The device which this button tray controls */
+  device: DiscoveredDevice;
 }
 
-function DeviceCardButtonTray({
+export default function DeviceCardButtonTray({
   handleInfoClick,
-  handleRefresh,
   handleStartMedia,
-  handleStop,
-  allowStop,
+  device,
 }: DeviceCardButtonTrayProps) {
+  const { status, refreshStatus } = useDeviceStatusContext();
+
+  const appIdentity = status?.app_status?.app_identity ?? "Unknown";
+  const allowStop = appIdentity != "Backdrop";
+
   const stopButtonClasses = allowStop ? "is-danger" : "is-danger is-light";
   const stopButtonText = allowStop
     ? "has-text-grey-dark"
     : "has-text-danger-light";
   const stopButtonCursor = allowStop ? "pointer" : "default";
+
+  const handleRefresh = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    refreshStatus();
+  };
+
+  const handleStop = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    // Stop the media playing
+    stopMediaAtReceiver(device);
+    // Refresh device status
+    refreshStatus();
+  };
 
   return (
     <div className="columns is-mobile is-vcentered mt-3">
@@ -88,5 +103,3 @@ function DeviceCardButtonTray({
     </div>
   );
 }
-
-export default DeviceCardButtonTray;

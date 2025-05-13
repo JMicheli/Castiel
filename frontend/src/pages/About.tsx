@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { fetchVersion } from "@api/config";
 import type { ServerVersionInfo } from "@api/config";
 
-function About() {
+export default function About() {
   const [serverVersion, setServerVersion] = useState<ServerVersionInfo | null>(
     null
   );
@@ -61,5 +61,3 @@ function About() {
     </>
   );
 }
-
-export default About;

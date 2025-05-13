@@ -1,15 +1,13 @@
 import { useState } from "react";
 import type { DiscoveredDevice } from "@api/discovery";
-import { stopMediaAtReceiver } from "@api/media";
 import StartMediaModal from "./StartMediaModal";
 import DeviceInfoModal from "./DeviceInfoModal";
-import { useDeviceStatus } from "@hooks/useDeviceStatus";
 import DeviceCardButtonTray from "./DeviceCardButtonTray";
 import DeviceMediaInfo from "./DeviceMediaInfo";
+import { DeviceStatusProvider } from "@providers/DeviceStatusProvider";
 
 interface DeviceCardProps {
   device: DiscoveredDevice;
-  onSelect?: (device: DiscoveredDevice) => void;
 }
 
 /**
@@ -19,24 +17,9 @@ interface DeviceCardProps {
  *
  * @param device - The device to display information for.
  */
-function DeviceCard({ device, onSelect }: DeviceCardProps) {
+export default function DeviceCard({ device }: DeviceCardProps) {
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [showStartMedia, setShowStartMedia] = useState(false);
-
-  const { status, refreshStatus } = useDeviceStatus(
-    device.ip_address,
-    device.port
-  );
-
-  // Pull variables out of status
-  const appStatus = status?.app_status;
-  const appIdentity = appStatus?.app_identity ?? "Unknown";
-  const stopButtonEnabled = appIdentity != "Backdrop";
-
-  const handleRefresh = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    refreshStatus();
-  };
 
   const handleStartMedia = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -48,22 +31,11 @@ function DeviceCard({ device, onSelect }: DeviceCardProps) {
     setShowInfoModal(true);
   };
 
-  const handleStop = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    stopMediaAtReceiver(device);
-  };
-
-  const handleClick = () => {
-    if (onSelect) {
-      onSelect(device);
-    }
-  };
-
   return (
-    <>
+    <DeviceStatusProvider ip={device.ip_address} port={device.port}>
       <div className="card">
         <div className="card-header"></div>
-        <div className="card-content" onClick={handleClick}>
+        <div className="card-content">
           <div className="content">
             {/* Title and Subtitle */}
             <div className="columns is-mobile is-vcentered">
@@ -84,15 +56,13 @@ function DeviceCard({ device, onSelect }: DeviceCardProps) {
             >{`${device.ip_address}:${device.port}`}</p>
 
             {/* Display of currently playing media and player controls */}
-            <DeviceMediaInfo appIdentity={appIdentity} />
+            <DeviceMediaInfo />
 
             {/* Buttons for info / refresh / casting / stopping media */}
             <DeviceCardButtonTray
               handleInfoClick={handleInfoClick}
               handleStartMedia={handleStartMedia}
-              handleRefresh={handleRefresh}
-              handleStop={handleStop}
-              allowStop={stopButtonEnabled}
+              device={device}
             />
           </div>
         </div>
@@ -111,8 +81,6 @@ function DeviceCard({ device, onSelect }: DeviceCardProps) {
         isActive={showInfoModal}
         onClose={() => setShowInfoModal(false)}
       />
-    </>
+    </DeviceStatusProvider>
   );
 }
-
-export default DeviceCard;
