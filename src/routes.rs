@@ -76,7 +76,7 @@ async fn start_media(Json(media_data): Json<StartMediaData>) -> Result<(), Casti
 ///
 /// Receives a device address from the frontend and stops media on that device.
 async fn stop_media(Json(device_addr): Json<DeviceAddress>) -> Result<(), CastielError> {
-  devices::media::stop_media_at_device(device_addr)?;
+  devices::media::stop_media_at_device(&device_addr)?;
   Ok(())
 }
 

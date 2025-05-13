@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { type DiscoveredDevice, fetchChromecasts } from "@api/discovery";
 
-interface UseChromecastDiscoveryResult {
+interface UseDeviceDiscoveryResult {
   /** List of discovered Chromecast devices */
   devices: DiscoveredDevice[];
 
@@ -21,9 +21,9 @@ interface UseChromecastDiscoveryResult {
  * @param autoRefresh Whether to automatically refresh the device list on mount
  * @returns Object containing devices, loading state, error state, and refresh function
  */
-export function useChromecastDiscovery(
+export function useDeviceDiscovery(
   autoRefresh = true
-): UseChromecastDiscoveryResult {
+): UseDeviceDiscoveryResult {
   const [devices, setDevices] = useState<DiscoveredDevice[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);

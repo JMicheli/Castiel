@@ -3,11 +3,11 @@ import type { DiscoveredDevice } from "@api/discovery";
 import { stopMediaAtReceiver } from "@api/media";
 import StartMediaModal from "./StartMediaModal";
 import DeviceInfoModal from "./DeviceInfoModal";
-import { useChromecastStatus } from "@hooks/useChromecastStatus";
-import DeviceCardButtons from "./DeviceCardButtons";
+import { useDeviceStatus } from "@hooks/useDeviceStatus";
+import DeviceCardButtonTray from "./DeviceCardButtonTray";
 import DeviceMediaInfo from "./DeviceMediaInfo";
 
-interface ChromecastCardProps {
+interface DeviceCardProps {
   device: DiscoveredDevice;
   onSelect?: (device: DiscoveredDevice) => void;
 }
@@ -19,11 +19,11 @@ interface ChromecastCardProps {
  *
  * @param device - The device to display information for.
  */
-function ChromecastCard({ device, onSelect }: ChromecastCardProps) {
-  const [showInfoModal, setShowInfoModal] = useState(false); // State for the new info modal
+function DeviceCard({ device, onSelect }: DeviceCardProps) {
+  const [showInfoModal, setShowInfoModal] = useState(false);
   const [showStartMedia, setShowStartMedia] = useState(false);
 
-  const { status, /*loading, error,*/ refreshStatus } = useChromecastStatus(
+  const { status, refreshStatus } = useDeviceStatus(
     device.ip_address,
     device.port
   );
@@ -86,8 +86,8 @@ function ChromecastCard({ device, onSelect }: ChromecastCardProps) {
             {/* Display of currently playing media and player controls */}
             <DeviceMediaInfo appIdentity={appIdentity} />
 
-            {/* Buttons for info / refresh / casting */}
-            <DeviceCardButtons
+            {/* Buttons for info / refresh / casting / stopping media */}
+            <DeviceCardButtonTray
               handleInfoClick={handleInfoClick}
               handleStartMedia={handleStartMedia}
               handleRefresh={handleRefresh}
@@ -115,4 +115,4 @@ function ChromecastCard({ device, onSelect }: ChromecastCardProps) {
   );
 }
 
-export default ChromecastCard;
+export default DeviceCard;

@@ -62,14 +62,7 @@ export default function DeviceMediaInfo({ appIdentity }: DeviceMediaInfoProps) {
 
   return (
     <div
-      className={`
-        box 
-        mt-4 
-        is-flex 
-        is-justify-content-center 
-        is-align-items-center 
-        ${bgClass}
-      `}
+      className={`box mt-4 is-flex is-justify-content-center is-align-items-center ${bgClass}`}
       style={{ height: "8rem" }}
     >
       <div className={`has-text-centered ${textClass}`}>

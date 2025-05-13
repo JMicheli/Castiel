@@ -1,13 +1,8 @@
-import { useChromecastDiscovery } from "@hooks/useChromecastDiscovery";
-import ChromecastCard from "@components/DeviceCard/DeviceCard";
+import { useDeviceDiscovery } from "@hooks/useDeviceDiscovery";
+import DeviceCard from "@components/DeviceCard/DeviceCard";
 
 function Home() {
-  const { devices, loading, error, refreshDevices } =
-    useChromecastDiscovery(true);
-
-  const handleRefresh = () => {
-    refreshDevices();
-  };
+  const { devices, loading, error, refreshDevices } = useDeviceDiscovery(true);
 
   return (
     <>
@@ -21,7 +16,7 @@ function Home() {
           <div className="level-item">
             <button
               className={`button is-primary ${loading ? "is-loading" : ""}`}
-              onClick={handleRefresh}
+              onClick={refreshDevices}
               disabled={loading}
             >
               Refresh Devices
@@ -36,7 +31,7 @@ function Home() {
             className="column is-one-third-desktop is-half-tablet is-full-mobile"
             key={device.fullname}
           >
-            <ChromecastCard device={device} />
+            <DeviceCard device={device} />
           </div>
         ))}
       </div>

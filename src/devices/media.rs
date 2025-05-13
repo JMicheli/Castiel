@@ -1,7 +1,5 @@
 //! Defines functionality for starting media playback and display on Chromecast devices.
 
-use std::str::FromStr;
-
 use rust_cast::{
   CastDevice,
   channels::{
@@ -13,7 +11,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
   devices::DeviceAddress,
-  devices::app_ids::{BACKDROP_ID, WEBVIEW_ID, WEBVIEW_NAMESPACE},
+  devices::app_ids::{WEBVIEW_ID, WEBVIEW_NAMESPACE},
   errors::CastielError,
 };
 
@@ -139,7 +137,7 @@ fn start_web_media(cast_device: &CastDevice, media_url: String) -> Result<(), Ca
   Ok(())
 }
 
-pub fn stop_media_at_device(device_addr: DeviceAddress) -> Result<(), CastielError> {
+pub fn stop_media_at_device(device_addr: &DeviceAddress) -> Result<(), CastielError> {
   let cast_device = super::get_cast_device(&device_addr.ip, device_addr.port)?;
 
   // Get status

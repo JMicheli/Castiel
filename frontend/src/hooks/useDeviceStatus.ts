@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { fetchDeviceStatus, type DeviceStatus } from "@api/status";
 
-interface UseChromecastStatusResult {
+interface UseDeviceStatusResult {
   /** The status of the Chromecast device */
   status: DeviceStatus | null;
 
@@ -22,10 +22,10 @@ interface UseChromecastStatusResult {
  * @param port The port of the device to fetch status for
  * @returns Object containing device status, loading state, error state, and refresh function
  */
-export function useChromecastStatus(
+export function useDeviceStatus(
   ip: string,
   port: number
-): UseChromecastStatusResult {
+): UseDeviceStatusResult {
   const [status, setStatus] = useState<DeviceStatus | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
