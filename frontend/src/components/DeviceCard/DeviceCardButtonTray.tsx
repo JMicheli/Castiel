@@ -39,8 +39,8 @@ export default function DeviceCardButtonTray({
     e.stopPropagation();
     // Stop the media playing
     stopMediaAtReceiver(device);
-    // Refresh device status
-    refreshStatus();
+    // Refresh device status in 500ms.
+    setTimeout(() => refreshStatus(), 500);
   };
 
   return (

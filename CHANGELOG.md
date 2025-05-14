@@ -5,11 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this
 project adheres to [Semantic Versioning](http://semver.org/).
 
-## v0.0.1 - 2025-05-11
+## v0.1.0 - 2025-05-14
 
-This is an initial testing release to validate GitHub actions functionality.
+This is the initial production release.
 
 ### Added
+
+- Users can search for Chromecast devices on a local network.
+- Users can send media commands to discovered devices, including commands to
+  "play" video, audio, images, and webpages. A button is also provided to stop
+  playback.
+- WebApp automatically polls the server to update the status of discovered
+  devices.
 
 ### Changed
 

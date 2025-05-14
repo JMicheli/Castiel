@@ -41,8 +41,9 @@ export default function StartMediaModal({
         contentType,
         streamType,
       });
-      // Refresh device status
-      refreshStatus();
+      // Refresh device status in 500ms.
+      setTimeout(() => refreshStatus(), 500);
+      onClose();
     } catch (error) {
       console.error("Failed to send media:", error);
     }

@@ -12,12 +12,14 @@ interface DeviceStatusProviderProps {
   children: ReactNode;
   ip: string;
   port: number;
+  pollIntervalMs: number;
 }
 
 export function DeviceStatusProvider({
   children,
   ip,
   port,
+  pollIntervalMs,
 }: DeviceStatusProviderProps) {
   const [status, setStatus] = useState<DeviceStatus | null>(null);
   const [loading, setLoading] = useState(false);
@@ -40,7 +42,10 @@ export function DeviceStatusProvider({
 
   useEffect(() => {
     fetchStatus();
-  }, [fetchStatus]);
+    const intervalId = setInterval(fetchStatus, pollIntervalMs);
+
+    return () => clearInterval(intervalId);
+  }, [fetchStatus, pollIntervalMs]);
 
   const value = useMemo(
     () => ({ status, loading, error, refreshStatus: fetchStatus }),

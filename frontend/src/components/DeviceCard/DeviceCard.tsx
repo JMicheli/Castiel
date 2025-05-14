@@ -6,6 +6,9 @@ import DeviceCardButtonTray from "./DeviceCardButtonTray";
 import DeviceMediaInfo from "./DeviceMediaInfo";
 import { DeviceStatusProvider } from "@providers/DeviceStatusProvider";
 
+const DEFAULT_POLL_INTERVAL_MS = 5000;
+const DEFAULT_JITTER_FACTOR = 0.1; // 10%
+
 interface DeviceCardProps {
   device: DiscoveredDevice;
 }
@@ -31,8 +34,16 @@ export default function DeviceCard({ device }: DeviceCardProps) {
     setShowInfoModal(true);
   };
 
+  const maxJitter = DEFAULT_POLL_INTERVAL_MS * DEFAULT_JITTER_FACTOR;
+  const statusPollInterval =
+    DEFAULT_POLL_INTERVAL_MS + Math.random() * maxJitter;
+
   return (
-    <DeviceStatusProvider ip={device.ip_address} port={device.port}>
+    <DeviceStatusProvider
+      ip={device.ip_address}
+      port={device.port}
+      pollIntervalMs={statusPollInterval}
+    >
       <div className="card">
         <div className="card-header"></div>
         <div className="card-content">
