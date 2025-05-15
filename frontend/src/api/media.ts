@@ -12,7 +12,7 @@ export type StreamTypeOptions = "Live" | "Buffered" | "None";
  * Sends media data to a specific Chromecast receiver.
  *
  * @param device - The Chromecast device to send media to.
- * @param mediaSettings - The media settings (receiver type, content ID, etc.).
+ * @param mediaSettings - The media settings (receiver type, content type, etc.).
  * @returns Promise resolving when the media data is sent.
  */
 export async function sendMediaToReceiver(
@@ -55,7 +55,6 @@ export async function sendMediaToReceiver(
  * Tells a specific Chromecast receiver to stop playing media.
  *
  * @param device - The Chromecast device to send media to.
- * @param mediaSettings - The media settings (receiver type, content ID, etc.).
  * @returns Promise resolving when the media data is sent.
  */
 export async function stopMediaAtReceiver(
