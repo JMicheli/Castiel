@@ -1,7 +1,7 @@
 {
   "name": "castiel-frontend",
   "private": true,
-  "author": { "name": "Joseph W. Michelu", "email": "josephwmicheli@gmail.com" },
+  "author": { "name": "Joseph W. Micheli", "email": "josephwmicheli@gmail.com" },
   "description": "The client side of a tool for managing a network's Chromecast devices.",
   "version": "0.1.0",
   "type": "module",
