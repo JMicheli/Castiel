@@ -64,11 +64,11 @@ jobs:
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
             binary_name: castiel
-            release_artifact_name: Castiel-x64-Linux
+            release_artifact_name: Castiel-${{ github.ref }}-x64-Linux
           - os: windows-latest
             target: x86_64-pc-windows-msvc
             binary_name: castiel.exe
-            release_artifact_name: Castiel-x64-Windows
+            release_artifact_name: Castiel-${{ github.ref }}-x64-Windows
 
     runs-on: ${{ matrix.os }}
 
