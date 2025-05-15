@@ -1,7 +1,8 @@
 [package]
 name = "castiel"
 version = "0.1.0"
-authors = ["Joseph Micheli <josephwmicheli@gmail.com>"]
+authors = ["Joseph W. Micheli <josephwmicheli@gmail.com>"]
+description = "The server side of a tool for managing a network's Chromecast devices."
 edition = "2024"
 
 [dependencies]
